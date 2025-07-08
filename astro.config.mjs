@@ -9,8 +9,7 @@ import remarkGfm from 'remark-gfm';
 
 // https://astro.build/config
 export default defineConfig({
-  // 如果使用自定义域名，可以删除或注释掉base配置
-  base: '/Blog',
+  // 使用自定义域名，不需要base路径
   integrations: [
     mdx({
       // 配置MDX
