@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 > nul
 set /p title=请输入文章标题: 
 set /p filename=请输入文件名(不含后缀): 
 
