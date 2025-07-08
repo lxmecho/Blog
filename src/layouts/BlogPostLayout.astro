@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import { formatDate } from '../utils/date';
 import type { CollectionEntry } from 'astro:content';
+import '../assets/resource-styles.css';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -79,7 +80,7 @@ const wordCount = post.body.split(/\s+/).length;
           )}
         </header>
         
-        <div class="prose dark:prose-dark max-w-none">
+        <div class="prose dark:prose-dark max-w-none resource-blog">
           <slot />
         </div>
         

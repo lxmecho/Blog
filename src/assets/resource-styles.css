@@ -1,0 +1,102 @@
+/* 资源博客专用样式 */
+
+/* 标题样式 */
+.resource-blog h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  font-family: "Microsoft YaHei", "SimHei", sans-serif;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.resource-blog h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #0ea5e9;
+  font-family: "Microsoft YaHei", "SimHei", sans-serif;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.resource-blog h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #14b8a6;
+  font-family: "Microsoft YaHei", "SimHei", sans-serif;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 资源项目样式 */
+.resource-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-left: 4px solid #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 0.25rem;
+}
+
+.resource-link {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.resource-link:hover {
+  text-decoration: underline;
+}
+
+.resource-url {
+  font-size: 0.875rem;
+  color: #6366f1;
+  font-family: Consolas, Monaco, "Andale Mono", monospace;
+  background-color: rgba(99, 102, 241, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+  word-break: break-all;
+  text-decoration: underline;
+}
+
+.resource-desc {
+  font-size: 1rem;
+  color: #4b5563;
+  font-family: "SimSun", "NSimSun", serif;
+}
+
+/* 暗黑模式适配 */
+.dark .resource-blog h1 {
+  color: #60a5fa;
+}
+
+.dark .resource-blog h2 {
+  color: #38bdf8;
+  border-bottom-color: #374151;
+}
+
+.dark .resource-blog h3 {
+  color: #2dd4bf;
+}
+
+.dark .resource-item {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.dark .resource-link {
+  color: #60a5fa;
+}
+
+.dark .resource-url {
+  color: #a5b4fc;
+  background-color: rgba(165, 180, 252, 0.1);
+}
+
+.dark .resource-desc {
+  color: #9ca3af;
+} 
