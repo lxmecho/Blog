@@ -91,6 +91,20 @@ export const siteConfig: SiteConfig = {
 3. 启用 GitHub Pages 功能
 4. GitHub Actions 会自动构建和部署您的博客
 
+## 注意事项
+
+### 中文编码
+
+如果遇到中文显示乱码问题，请确保：
+
+1. 所有源文件使用UTF-8编码保存
+2. 项目克隆后，不要更改文件编码
+3. 如果使用Windows，建议使用VS Code并设置默认编码为UTF-8
+
+### 图片资源
+
+所有图片应放在`public/assets/images/`目录下，然后在配置和内容中引用为`/blog/assets/images/图片名`。
+
 ## 📜 许可证
 
 MIT 
