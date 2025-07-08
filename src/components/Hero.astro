@@ -1,0 +1,25 @@
+---
+import { siteConfig } from '../config/site';
+
+// 在多个背景图之间随机选择一个
+const backgroundIndex = Math.floor(Math.random() * siteConfig.heroSettings.backgrounds.length);
+const backgroundImage = siteConfig.heroSettings.backgrounds[backgroundIndex];
+const imageCredit = siteConfig.heroSettings.credits[backgroundIndex] || '';
+---
+
+<div class="relative w-full h-[50vh] min-h-[350px] max-h-[500px] overflow-hidden">
+  <div 
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    style={`background-image: url(${backgroundImage})`}
+  ></div>
+  
+  <!-- 渐变叠加层 -->
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
+  
+  <!-- 图片来源信息 -->
+  {imageCredit && (
+    <div class="absolute bottom-3 right-4 text-xs text-white/80 bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+      {imageCredit}
+    </div>
+  )}
+</div>

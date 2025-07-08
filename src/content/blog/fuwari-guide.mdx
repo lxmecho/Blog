@@ -1,0 +1,132 @@
+---
+title: '简单指南：使用 Fuwari 主题'
+description: '了解如何设置和使用 Fuwari 主题来打造您的个人博客。'
+pubDate: 2024-04-01
+heroImage: '/blog/assets/images/blog.jpg'
+tags: ['博客', '指南', 'Fuwari']
+category: '博客'
+---
+
+# 简单指南：使用 Fuwari 主题
+
+Fuwari 是一个简洁、现代的博客主题，专注于提供出色的阅读体验和美观的视觉效果。这篇指南将向您展示如何设置和使用 Fuwari 主题来创建您自己的博客。
+
+## 开始使用
+
+首先，您需要确保您已经安装了必要的依赖：
+
+- [Node.js](https://nodejs.org/) (14.x 或更高版本)
+- [Git](https://git-scm.com/)
+
+接着，您可以使用以下命令来克隆和设置 Fuwari 主题：
+
+```bash
+# 克隆仓库
+git clone https://github.com/yourusername/fuwari-blog.git my-blog
+
+# 进入项目目录
+cd my-blog
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+```
+
+启动开发服务器后，您可以在浏览器中访问 `http://localhost:4321` 来查看您的博客。
+
+## 个性化设置
+
+### 配置文件
+
+Fuwari 主题的主要配置文件位于 `src/config/site.ts`。您可以在这里修改博客的各种设置，例如：
+
+- 博客标题和描述
+- 作者信息（姓名、头像、简介）
+- 导航链接
+- 社交媒体链接
+- 主题颜色和外观
+- 顶部 Hero 区域的背景图片
+
+以下是配置文件的示例：
+
+```typescript
+export const siteConfig: SiteConfig = {
+  title: 'Fuwari Blog',
+  description: '一个美观、现代的个人博客',
+  language: 'zh-CN',
+  
+  author: {
+    name: '山鬼',
+    avatar: '/blog/assets/images/avatar.jpg',
+    bio: '前端开发者、写作爱好者',
+  },
+  
+  // 更多配置...
+};
+```
+
+### 添加新文章
+
+所有博客文章都存储在 `src/content/blog/` 目录中。您可以创建新的 `.mdx` 文件来添加文章。每篇文章需要包含 frontmatter 元数据：
+
+```markdown
+---
+title: '文章标题'
+description: '文章描述'
+pubDate: '2024-04-01'
+heroImage: '/blog/assets/images/article-cover.jpg'
+tags: ['标签1', '标签2']
+category: '分类'
+---
+
+文章内容...
+```
+
+## 特色功能
+
+### 明暗模式切换
+
+Fuwari 主题支持明暗模式切换。用户可以通过点击右上角的太阳/月亮图标来切换模式。主题会根据用户的偏好自动应用相应的模式，并将设置保存在本地存储中。
+
+### 自定义主题颜色
+
+除了明暗模式，用户还可以通过点击调色板图标来选择不同的主题颜色。这些颜色可以在配置文件中设置。
+
+### 响应式设计
+
+Fuwari 主题采用响应式设计，可以适应各种屏幕尺寸，从移动设备到桌面显示器。
+
+### Markdown 扩展
+
+Fuwari 主题支持丰富的 Markdown 特性，包括：
+
+- GitHub Flavored Markdown
+- 代码高亮
+- 数学公式
+- 自定义组件
+
+## 部署到 GitHub Pages
+
+要将您的博客部署到 GitHub Pages，您需要：
+
+1. 创建一个新的 GitHub 仓库
+2. 将您的项目推送到该仓库
+3. 配置 GitHub Actions workflow 文件 (`.github/workflows/deploy.yml`)
+
+GitHub Actions 会在您每次推送到 `main` 分支时自动构建和部署您的博客。
+
+## 定制化
+
+如果您想进一步定制 Fuwari 主题，您可以：
+
+- 修改 `src/components/` 目录中的组件
+- 编辑 `src/layouts/` 目录中的布局
+- 调整 `tailwind.config.mjs` 文件中的 Tailwind CSS 配置
+
+## 结语
+
+这就是 Fuwari 主题的基本使用指南。希望您能喜欢这个主题，并用它创建一个独特的个人博客！如果您有任何问题或建议，请随时联系我们。
+
+祝您使用愉快！ 

@@ -1,0 +1,35 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  title?: string;
+  columns?: 1 | 2 | 3;
+}
+
+const { posts, title = '最新文章', columns = 2 } = Astro.props;
+---
+
+<div>
+  {title && (
+    <div class="border-l-4 border-primary-500 pl-4 mb-6">
+      <h2 class="text-2xl font-bold">{title}</h2>
+    </div>
+  )}
+  
+  <div class={`grid gap-6 ${
+    columns === 1 ? 'grid-cols-1' : 
+    columns === 2 ? 'grid-cols-1 md:grid-cols-2' : 
+    'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+  }`}>
+    {posts.map(post => <ArticleCard post={post} />)}
+    
+    {/* 如果没有文章，显示空状态 */}
+    {posts.length === 0 && (
+      <div class="col-span-full p-10 text-center text-gray-500 dark:text-gray-400">
+        <p>没有找到文章。</p>
+      </div>
+    )}
+  </div>
+</div> 

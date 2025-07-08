@@ -1,0 +1,117 @@
+---
+import { siteConfig } from '../config/site';
+import ThemeToggle from './ThemeToggle.astro';
+import ColorPalette from './ColorPalette.astro';
+import SearchIcon from './icons/SearchIcon.astro';
+import HomeIcon from './icons/HomeIcon.astro';
+import ExternalLinkIcon from './icons/ExternalLinkIcon.astro';
+---
+
+<header class="sticky top-0 z-50 w-full bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md shadow-sm">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/blog" class="flex items-center space-x-2">
+      <HomeIcon class="w-6 h-6 text-primary-600 dark:text-primary-400" />
+      <span class="text-xl font-semibold text-text-light dark:text-text-dark">{siteConfig.title}</span>
+    </a>
+    
+    <!-- 导航链接 -->
+    <nav class="hidden md:flex items-center space-x-6">
+      {siteConfig.navLinks.map((link) => (
+        <a 
+          href={link.href}
+          class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          target={link.external ? "_blank" : "_self"}
+          rel={link.external ? "noopener noreferrer" : ""}
+        >
+          <span>{link.label}</span>
+          {link.external && <ExternalLinkIcon class="inline w-4 h-4 ml-1" />}
+        </a>
+      ))}
+    </nav>
+    
+    <!-- 搜索和主题切换 -->
+    <div class="flex items-center space-x-3">
+      <button id="search-button" class="p-1.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+        <SearchIcon class="w-5 h-5" />
+      </button>
+      
+      <ColorPalette />
+      
+      <ThemeToggle />
+      
+      <!-- 移动端菜单按钮 -->
+      <button id="mobile-menu-button" class="md:hidden p-1.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 搜索面板 (默认隐藏) -->
+  <div id="search-panel" class="hidden absolute top-full left-0 w-full bg-background-light dark:bg-background-dark p-4 shadow-lg">
+    <div class="container mx-auto max-w-2xl">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="search-input"
+          placeholder="搜索文章..." 
+          class="w-full py-2 px-4 pr-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <SearchIcon class="w-5 h-5" />
+        </button>
+      </div>
+      <div id="search-results" class="mt-4 max-h-80 overflow-y-auto"></div>
+    </div>
+  </div>
+  
+  <!-- 移动端导航菜单 (默认隐藏) -->
+  <div id="mobile-menu" class="hidden md:hidden w-full bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+    <nav class="container mx-auto px-4 py-2 flex flex-col">
+      {siteConfig.navLinks.map((link) => (
+        <a 
+          href={link.href}
+          class="py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+          target={link.external ? "_blank" : "_self"}
+          rel={link.external ? "noopener noreferrer" : ""}
+        >
+          <span>{link.label}</span>
+          {link.external && <ExternalLinkIcon class="inline w-4 h-4 ml-1" />}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  // 搜索面板切换
+  const searchButton = document.getElementById('search-button');
+  const searchPanel = document.getElementById('search-panel');
+  const searchInput = document.getElementById('search-input');
+  
+  searchButton?.addEventListener('click', () => {
+    searchPanel?.classList.toggle('hidden');
+    if (!searchPanel?.classList.contains('hidden')) {
+      searchInput?.focus();
+    }
+  });
+  
+  // 点击其他区域关闭搜索面板
+  document.addEventListener('click', (event) => {
+    if (event.target !== searchButton && 
+        !searchPanel?.contains(event.target as Node) && 
+        !searchPanel?.classList.contains('hidden')) {
+      searchPanel?.classList.add('hidden');
+    }
+  });
+  
+  // 移动端菜单切换
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  mobileMenuButton?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script> 

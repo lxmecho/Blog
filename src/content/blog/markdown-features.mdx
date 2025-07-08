@@ -1,0 +1,185 @@
+---
+title: 'Markdown 扩展特性'
+description: '了解如何使用扩展的 Markdown 语法和组件来增强您的博客文章。'
+pubDate: 2024-05-01
+updatedDate: 2024-05-02
+heroImage: '/blog/assets/images/markdown.jpg'
+tags: ['Markdown', '指南', '教程']
+category: '技术'
+---
+
+# Markdown 扩展特性
+
+Markdown 是一种轻量级标记语言，可以轻松地将纯文本转换为格式化文档。在这篇文章中，我们将介绍一些 Markdown 的基础语法和扩展功能。
+
+## 基本语法
+
+### 标题
+
+```markdown
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+```
+
+### 强调
+
+```markdown
+*斜体* 或 _斜体_
+**粗体** 或 __粗体__
+***粗斜体*** 或 ___粗斜体___
+```
+
+*斜体* 或 _斜体_
+**粗体** 或 __粗体__
+***粗斜体*** 或 ___粗斜体___
+
+### 列表
+
+无序列表:
+
+```markdown
+- 项目1
+- 项目2
+  - 子项目2.1
+  - 子项目2.2
+- 项目3
+```
+
+- 项目1
+- 项目2
+  - 子项目2.1
+  - 子项目2.2
+- 项目3
+
+有序列表:
+
+```markdown
+1. 第一项
+2. 第二项
+3. 第三项
+```
+
+1. 第一项
+2. 第二项
+3. 第三项
+
+### 链接和图片
+
+```markdown
+[链接文字](https://www.example.com)
+![图片替代文字](https://example.com/image.jpg)
+```
+
+### 引用
+
+```markdown
+> 这是一个引用。
+> 引用可以有多行。
+>
+> 也可以有多个段落。
+```
+
+> 这是一个引用。
+> 引用可以有多行。
+>
+> 也可以有多个段落。
+
+### 代码块
+
+```javascript
+function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+
+greet('World');
+```
+
+## GitHub Flavored Markdown (GFM)
+
+本博客支持 GitHub Flavored Markdown 的特性:
+
+### 表格
+
+```markdown
+| 表头1 | 表头2 | 表头3 |
+|-------|-------|-------|
+| 单元格1 | 单元格2 | 单元格3 |
+| 单元格4 | 单元格5 | 单元格6 |
+```
+
+| 表头1 | 表头2 | 表头3 |
+|-------|-------|-------|
+| 单元格1 | 单元格2 | 单元格3 |
+| 单元格4 | 单元格5 | 单元格6 |
+
+### 任务列表
+
+```markdown
+- [x] 已完成任务
+- [ ] 未完成任务
+- [ ] 另一个未完成任务
+```
+
+- [x] 已完成任务
+- [ ] 未完成任务
+- [ ] 另一个未完成任务
+
+### 删除线
+
+```markdown
+~~删除的文字~~
+```
+
+~~删除的文字~~
+
+### 自动链接
+
+只需输入网址，它将自动转换为链接：
+https://www.example.com
+
+## 自定义组件（使用 MDX）
+
+本博客使用 MDX，允许在 Markdown 文档中嵌入 React 组件。例如，您可以创建一个警告框组件：
+
+```jsx
+<Alert type="warning">
+  这是一个警告消息!
+</Alert>
+```
+
+## 代码高亮
+
+我们使用 `rehype-pretty-code` 实现代码高亮:
+
+```typescript
+// 这段 TypeScript 代码将会被高亮
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+function getUserById(id: number): User | undefined {
+  return users.find(user => user.id === id);
+}
+```
+
+## 自动生成目录
+
+文章页面会自动根据标题生成目录，帮助读者更好地导航文章内容。
+
+## 数学公式
+
+我们还支持使用 LaTeX 语法的数学公式:
+
+```latex
+$E = mc^2$
+```
+
+## 结论
+
+这篇文章展示了 Markdown 和 MDX 的强大功能，使用这些功能可以创建丰富多样的博客文章。希望这篇指南对你有所帮助！ 
