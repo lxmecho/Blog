@@ -10,20 +10,27 @@ import { siteConfig } from '../config/site';
   </button>
   
   <!-- 颜色主题下拉面板 -->
-  <div id="color-palette-panel" class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
-    <div class="p-2">
+  <div id="color-palette-panel" class="hidden absolute right-0 mt-2 w-60 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+    <div class="p-3">
       <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 px-2">主题颜色</h3>
-      <div class="space-y-1">
+      <div class="space-y-2">
         {siteConfig.appearance.themeColors.map((color) => (
           <button 
-            class="color-theme-option flex items-center w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+            class="color-theme-option flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
             data-color={color.primaryColor}
             data-name={color.name}
+            style={`border-left: 4px solid ${color.primaryColor};`}
           >
-            <span class="w-4 h-4 rounded-full mr-2" style={`background-color: ${color.primaryColor}`}></span>
+            <span class="w-5 h-5 rounded-full mr-3" style={`background-color: ${color.primaryColor}`}></span>
             <span>{color.name}</span>
+            <span class="ml-auto color-theme-check hidden">✓</span>
           </button>
         ))}
+      </div>
+      <div class="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+        <button id="apply-theme-color" class="w-full px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded text-sm font-medium">
+          应用选中的颜色
+        </button>
       </div>
     </div>
   </div>
@@ -36,9 +43,13 @@ import { siteConfig } from '../config/site';
     const colorPaletteButton = document.getElementById('color-palette-button');
     const colorPalettePanel = document.getElementById('color-palette-panel');
     const colorThemeOptions = document.querySelectorAll('.color-theme-option');
+    const applyThemeColorButton = document.getElementById('apply-theme-color');
+    
+    let selectedColor = localStorage.getItem('theme-color') || '#0ea5e9';
+    let selectedElement = null;
     
     // 设置CSS变量函数
-    function setThemeColor(colorHex) {
+    function setThemeColor(colorHex, updateStorage = true) {
       // 将十六进制颜色转换为RGB值
       const r = parseInt(colorHex.slice(1, 3), 16);
       const g = parseInt(colorHex.slice(3, 5), 16);
@@ -55,13 +66,28 @@ import { siteConfig } from '../config/site';
       document.dispatchEvent(event);
       
       // 保存到localStorage
-      localStorage.setItem('theme-color', colorHex);
+      if (updateStorage) {
+        localStorage.setItem('theme-color', colorHex);
+      }
       
-      // 强制刷新以确保所有颜色都被更新
-      document.body.classList.add('color-theme-updated');
+      // 强制重新应用颜色到所有元素
+      const allElements = document.querySelectorAll('*');
+      allElements.forEach(el => {
+        if (el.classList.length > 0) {
+          const classList = el.className.split(' ');
+          if (classList.some(cls => cls.includes('primary-'))) {
+            el.style.cssText = el.style.cssText; // 触发重新应用样式
+          }
+        }
+      });
+      
+      // 显示颜色变化反馈
+      document.body.style.transition = "none";
+      document.body.classList.add('theme-color-changed');
       setTimeout(() => {
-        document.body.classList.remove('color-theme-updated');
-      }, 100);
+        document.body.style.transition = "";
+        document.body.classList.remove('theme-color-changed');
+      }, 300);
     }
     
     // 面板切换
@@ -69,6 +95,11 @@ import { siteConfig } from '../config/site';
       colorPaletteButton.addEventListener('click', (event) => {
         event.stopPropagation(); // 阻止事件冒泡
         colorPalettePanel.classList.toggle('hidden');
+        
+        // 如果打开面板，高亮当前选中的颜色
+        if (!colorPalettePanel.classList.contains('hidden')) {
+          updateSelectedColorUI();
+        }
       });
       
       // 点击面板内部不关闭面板
@@ -84,7 +115,23 @@ import { siteConfig } from '../config/site';
       }
     });
     
-    // 颜色主题切换
+    // 更新选中颜色的UI
+    function updateSelectedColorUI() {
+      colorThemeOptions.forEach(option => {
+        const check = option.querySelector('.color-theme-check');
+        const color = option.getAttribute('data-color');
+        if (color === selectedColor) {
+          option.classList.add('bg-gray-100', 'dark:bg-gray-700');
+          check.classList.remove('hidden');
+          selectedElement = option;
+        } else {
+          option.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+          check.classList.add('hidden');
+        }
+      });
+    }
+    
+    // 颜色主题选择
     colorThemeOptions.forEach(option => {
       if (option) {
         option.addEventListener('click', (event) => {
@@ -93,99 +140,79 @@ import { siteConfig } from '../config/site';
           const color = option.getAttribute('data-color');
           if (color) {
             console.log('选择了颜色:', color); // 调试日志
-            setThemeColor(color);
-            if (colorPalettePanel) {
-              colorPalettePanel.classList.add('hidden');
-            }
+            selectedColor = color;
+            updateSelectedColorUI();
           }
         });
       }
     });
     
+    // 应用选中的颜色
+    if (applyThemeColorButton) {
+      applyThemeColorButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (selectedColor) {
+          setThemeColor(selectedColor, true);
+          colorPalettePanel.classList.add('hidden');
+          
+          // 显示成功消息
+          showColorChangeMessage(`颜色已更改为 ${selectedElement ? selectedElement.getAttribute('data-name') : '新主题'}`);
+        }
+      });
+    }
+    
+    // 显示颜色变更消息
+    function showColorChangeMessage(message) {
+      // 创建消息元素
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      messageDiv.textContent = message;
+      
+      // 添加到文档
+      document.body.appendChild(messageDiv);
+      
+      // 3秒后移除
+      setTimeout(() => {
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transition = 'opacity 0.5s';
+        setTimeout(() => {
+          document.body.removeChild(messageDiv);
+        }, 500);
+      }, 3000);
+    }
+    
     // 立即应用保存的颜色
     const savedColor = localStorage.getItem('theme-color');
     if (savedColor) {
-      setThemeColor(savedColor);
+      selectedColor = savedColor;
+      setThemeColor(savedColor, false);
     } else {
       // 获取默认颜色
       const firstColorOption = document.querySelector('.color-theme-option');
       if (firstColorOption) {
         const defaultColor = firstColorOption.getAttribute('data-color');
         if (defaultColor) {
-          setThemeColor(defaultColor);
+          selectedColor = defaultColor;
+          setThemeColor(defaultColor, false);
         }
       }
     }
   });
 </script>
 
-<style is:global>
-  :root {
-    --color-primary: #0ea5e9;
-    --color-primary-rgb: 14, 165, 233;
+<style>
+  /* 颜色选择面板样式 */
+  .color-theme-option {
+    transition: all 0.2s ease;
   }
   
-  /* 强制触发重新渲染 */
-  .color-theme-updated * {
-    transition: background-color 0.1s, color 0.1s, border-color 0.1s !important;
+  .color-theme-option:hover {
+    transform: translateX(2px);
   }
   
-  /* 主色调 */
-  .text-primary-50, .text-primary-100, .text-primary-200, .text-primary-300, 
-  .text-primary-400, .text-primary-500, .text-primary-600, .text-primary-700, 
-  .text-primary-800, .text-primary-900, .text-primary-950 {
-    color: var(--color-primary) !important;
-    opacity: var(--tw-text-opacity, 1);
-  }
-  
-  .bg-primary-50, .bg-primary-100, .bg-primary-200, .bg-primary-300, 
-  .bg-primary-400, .bg-primary-500, .bg-primary-600, .bg-primary-700, 
-  .bg-primary-800, .bg-primary-900, .bg-primary-950 {
-    background-color: var(--color-primary) !important;
-    opacity: var(--tw-bg-opacity, 1);
-  }
-  
-  .border-primary-50, .border-primary-100, .border-primary-200, .border-primary-300, 
-  .border-primary-400, .border-primary-500, .border-primary-600, .border-primary-700, 
-  .border-primary-800, .border-primary-900, .border-primary-950 {
-    border-color: var(--color-primary) !important;
-    opacity: var(--tw-border-opacity, 1);
-  }
-  
-  /* 悬停状态 */
-  .hover\:text-primary-50:hover, .hover\:text-primary-100:hover, .hover\:text-primary-200:hover,
-  .hover\:text-primary-300:hover, .hover\:text-primary-400:hover, .hover\:text-primary-500:hover,
-  .hover\:text-primary-600:hover, .hover\:text-primary-700:hover, .hover\:text-primary-800:hover,
-  .hover\:text-primary-900:hover, .hover\:text-primary-950:hover {
-    color: var(--color-primary) !important;
-  }
-  
-  .hover\:bg-primary-50:hover, .hover\:bg-primary-100:hover, .hover\:bg-primary-200:hover,
-  .hover\:bg-primary-300:hover, .hover\:bg-primary-400:hover, .hover\:bg-primary-500:hover,
-  .hover\:bg-primary-600:hover, .hover\:bg-primary-700:hover, .hover\:bg-primary-800:hover,
-  .hover\:bg-primary-900:hover, .hover\:bg-primary-950:hover {
-    background-color: var(--color-primary) !important;
-  }
-  
-  .hover\:border-primary-50:hover, .hover\:border-primary-100:hover, .hover\:border-primary-200:hover,
-  .hover\:border-primary-300:hover, .hover\:border-primary-400:hover, .hover\:border-primary-500:hover,
-  .hover\:border-primary-600:hover, .hover\:border-primary-700:hover, .hover\:border-primary-800:hover,
-  .hover\:border-primary-900:hover, .hover\:border-primary-950:hover {
-    border-color: var(--color-primary) !important;
-  }
-  
-  /* 焦点状态 */
-  .focus\:ring-primary-50:focus, .focus\:ring-primary-100:focus, .focus\:ring-primary-200:focus,
-  .focus\:ring-primary-300:focus, .focus\:ring-primary-400:focus, .focus\:ring-primary-500:focus,
-  .focus\:ring-primary-600:focus, .focus\:ring-primary-700:focus, .focus\:ring-primary-800:focus,
-  .focus\:ring-primary-900:focus, .focus\:ring-primary-950:focus {
-    --tw-ring-color: var(--color-primary) !important;
-  }
-  
-  .focus\:border-primary-50:focus, .focus\:border-primary-100:focus, .focus\:border-primary-200:focus,
-  .focus\:border-primary-300:focus, .focus\:border-primary-400:focus, .focus\:border-primary-500:focus,
-  .focus\:border-primary-600:focus, .focus\:border-primary-700:focus, .focus\:border-primary-800:focus,
-  .focus\:border-primary-900:focus, .focus\:border-primary-950:focus {
-    border-color: var(--color-primary) !important;
+  .color-theme-check {
+    font-weight: bold;
+    color: var(--color-primary);
   }
 </style> 

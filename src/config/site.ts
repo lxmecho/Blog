@@ -104,9 +104,9 @@ export const siteConfig: SiteConfig = {
   
   heroSettings: {
     backgrounds: [
-      '/assets/images/1.jpg',
       '/assets/images/2.jpg',
-      '/assets/images/3.jpg'
+      '/assets/images/3.jpg',
+      '/assets/images/7.jpg'
     ],
     credits: []
   },

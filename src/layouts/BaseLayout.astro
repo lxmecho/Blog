@@ -3,6 +3,7 @@ import { siteConfig } from '../config/site';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FixEncoding from '../components/FixEncoding.astro';
+import '../assets/theme-colors.css';
 
 interface Props {
   title?: string;
@@ -86,7 +87,14 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
           // 设置CSS变量
           document.documentElement.style.setProperty('--color-primary', savedColor);
           document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+          
+          console.log('BaseLayout: 应用主题颜色', savedColor);
         }
+        
+        // 监听主题颜色变化事件
+        document.addEventListener('themeColorChanged', (event) => {
+          console.log('主题颜色已更改:', event.detail);
+        });
       });
     </script>
   </head>
