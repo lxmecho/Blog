@@ -53,7 +53,7 @@ export const siteConfig: SiteConfig = {
   
   author: {
     name: 'lxm',
-    avatar: '/assets/images/4.jpg',
+    avatar: '/assets/images/8.jpg',
     bio: '世事漫随流水，算来一梦浮生',
   },
   

@@ -48,8 +48,20 @@ import { siteConfig } from '../config/site';
       document.documentElement.style.setProperty('--color-primary', colorHex);
       document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
       
+      // 创建一个颜色更新事件，通知其他组件
+      const event = new CustomEvent('themeColorChanged', { 
+        detail: { color: colorHex, rgb: `${r}, ${g}, ${b}` } 
+      });
+      document.dispatchEvent(event);
+      
       // 保存到localStorage
       localStorage.setItem('theme-color', colorHex);
+      
+      // 强制刷新以确保所有颜色都被更新
+      document.body.classList.add('color-theme-updated');
+      setTimeout(() => {
+        document.body.classList.remove('color-theme-updated');
+      }, 100);
     }
     
     // 面板切换
@@ -75,9 +87,12 @@ import { siteConfig } from '../config/site';
     // 颜色主题切换
     colorThemeOptions.forEach(option => {
       if (option) {
-        option.addEventListener('click', () => {
+        option.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
           const color = option.getAttribute('data-color');
           if (color) {
+            console.log('选择了颜色:', color); // 调试日志
             setThemeColor(color);
             if (colorPalettePanel) {
               colorPalettePanel.classList.add('hidden');
@@ -110,33 +125,67 @@ import { siteConfig } from '../config/site';
     --color-primary-rgb: 14, 165, 233;
   }
   
-  /* 覆盖Tailwind的主题颜色 */
-  .text-primary-500 {
+  /* 强制触发重新渲染 */
+  .color-theme-updated * {
+    transition: background-color 0.1s, color 0.1s, border-color 0.1s !important;
+  }
+  
+  /* 主色调 */
+  .text-primary-50, .text-primary-100, .text-primary-200, .text-primary-300, 
+  .text-primary-400, .text-primary-500, .text-primary-600, .text-primary-700, 
+  .text-primary-800, .text-primary-900, .text-primary-950 {
+    color: var(--color-primary) !important;
+    opacity: var(--tw-text-opacity, 1);
+  }
+  
+  .bg-primary-50, .bg-primary-100, .bg-primary-200, .bg-primary-300, 
+  .bg-primary-400, .bg-primary-500, .bg-primary-600, .bg-primary-700, 
+  .bg-primary-800, .bg-primary-900, .bg-primary-950 {
+    background-color: var(--color-primary) !important;
+    opacity: var(--tw-bg-opacity, 1);
+  }
+  
+  .border-primary-50, .border-primary-100, .border-primary-200, .border-primary-300, 
+  .border-primary-400, .border-primary-500, .border-primary-600, .border-primary-700, 
+  .border-primary-800, .border-primary-900, .border-primary-950 {
+    border-color: var(--color-primary) !important;
+    opacity: var(--tw-border-opacity, 1);
+  }
+  
+  /* 悬停状态 */
+  .hover\:text-primary-50:hover, .hover\:text-primary-100:hover, .hover\:text-primary-200:hover,
+  .hover\:text-primary-300:hover, .hover\:text-primary-400:hover, .hover\:text-primary-500:hover,
+  .hover\:text-primary-600:hover, .hover\:text-primary-700:hover, .hover\:text-primary-800:hover,
+  .hover\:text-primary-900:hover, .hover\:text-primary-950:hover {
     color: var(--color-primary) !important;
   }
   
-  .bg-primary-500 {
+  .hover\:bg-primary-50:hover, .hover\:bg-primary-100:hover, .hover\:bg-primary-200:hover,
+  .hover\:bg-primary-300:hover, .hover\:bg-primary-400:hover, .hover\:bg-primary-500:hover,
+  .hover\:bg-primary-600:hover, .hover\:bg-primary-700:hover, .hover\:bg-primary-800:hover,
+  .hover\:bg-primary-900:hover, .hover\:bg-primary-950:hover {
     background-color: var(--color-primary) !important;
   }
   
-  .border-primary-500 {
+  .hover\:border-primary-50:hover, .hover\:border-primary-100:hover, .hover\:border-primary-200:hover,
+  .hover\:border-primary-300:hover, .hover\:border-primary-400:hover, .hover\:border-primary-500:hover,
+  .hover\:border-primary-600:hover, .hover\:border-primary-700:hover, .hover\:border-primary-800:hover,
+  .hover\:border-primary-900:hover, .hover\:border-primary-950:hover {
     border-color: var(--color-primary) !important;
   }
   
-  .hover\:bg-primary-500:hover {
-    background-color: var(--color-primary) !important;
-  }
-  
-  .hover\:text-primary-500:hover {
-    color: var(--color-primary) !important;
-  }
-  
-  /* 按钮和交互元素 */
-  .ring-primary-500 {
+  /* 焦点状态 */
+  .focus\:ring-primary-50:focus, .focus\:ring-primary-100:focus, .focus\:ring-primary-200:focus,
+  .focus\:ring-primary-300:focus, .focus\:ring-primary-400:focus, .focus\:ring-primary-500:focus,
+  .focus\:ring-primary-600:focus, .focus\:ring-primary-700:focus, .focus\:ring-primary-800:focus,
+  .focus\:ring-primary-900:focus, .focus\:ring-primary-950:focus {
     --tw-ring-color: var(--color-primary) !important;
   }
   
-  .focus\:ring-primary-500:focus {
-    --tw-ring-color: var(--color-primary) !important;
+  .focus\:border-primary-50:focus, .focus\:border-primary-100:focus, .focus\:border-primary-200:focus,
+  .focus\:border-primary-300:focus, .focus\:border-primary-400:focus, .focus\:border-primary-500:focus,
+  .focus\:border-primary-600:focus, .focus\:border-primary-700:focus, .focus\:border-primary-800:focus,
+  .focus\:border-primary-900:focus, .focus\:border-primary-950:focus {
+    border-color: var(--color-primary) !important;
   }
 </style> 
