@@ -15,34 +15,40 @@
 </button>
 
 <script>
-  // 获取主题切换按钮和图标
-  const themeToggleBtn = document.getElementById('theme-toggle');
-  const lightIcon = document.getElementById('theme-toggle-light-icon');
-  const darkIcon = document.getElementById('theme-toggle-dark-icon');
+  document.addEventListener('DOMContentLoaded', () => {
+    // 获取主题切换按钮和图标
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
 
-  // 根据当前主题显示对应图标
-  if (document.documentElement.classList.contains('dark')) {
-    lightIcon?.classList.remove('hidden');
-    darkIcon?.classList.add('hidden');
-  } else {
-    lightIcon?.classList.add('hidden');
-    darkIcon?.classList.remove('hidden');
-  }
+    if (themeToggleBtn && lightIcon && darkIcon) {
+      // 根据当前主题显示对应图标
+      if (document.documentElement.classList.contains('dark')) {
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+      } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
 
-  // 主题切换逻辑
-  themeToggleBtn?.addEventListener('click', () => {
-    // 切换类名
-    document.documentElement.classList.toggle('dark');
-    
-    // 更新图标显示
-    if (document.documentElement.classList.contains('dark')) {
-      lightIcon?.classList.remove('hidden');
-      darkIcon?.classList.add('hidden');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      lightIcon?.classList.add('hidden');
-      darkIcon?.classList.remove('hidden');
-      localStorage.setItem('theme', 'light');
+      // 主题切换逻辑
+      themeToggleBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); // 阻止事件冒泡
+        
+        // 切换类名
+        document.documentElement.classList.toggle('dark');
+        
+        // 更新图标显示
+        if (document.documentElement.classList.contains('dark')) {
+          lightIcon.classList.remove('hidden');
+          darkIcon.classList.add('hidden');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          lightIcon.classList.add('hidden');
+          darkIcon.classList.remove('hidden');
+          localStorage.setItem('theme', 'light');
+        }
+      });
     }
   });
 </script> 

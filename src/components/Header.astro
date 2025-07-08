@@ -86,32 +86,47 @@ import ExternalLinkIcon from './icons/ExternalLinkIcon.astro';
 </header>
 
 <script>
-  // 搜索面板切换
-  const searchButton = document.getElementById('search-button');
-  const searchPanel = document.getElementById('search-panel');
-  const searchInput = document.getElementById('search-input');
-  
-  searchButton?.addEventListener('click', () => {
-    searchPanel?.classList.toggle('hidden');
-    if (!searchPanel?.classList.contains('hidden')) {
-      searchInput?.focus();
+  // 等待DOM完全加载
+  document.addEventListener('DOMContentLoaded', () => {
+    // 搜索面板切换
+    const searchButton = document.getElementById('search-button');
+    const searchPanel = document.getElementById('search-panel');
+    const searchInput = document.getElementById('search-input');
+    
+    if (searchButton && searchPanel && searchInput) {
+      // 改进的点击事件处理
+      searchButton.addEventListener('click', (event) => {
+        event.stopPropagation(); // 阻止事件冒泡
+        searchPanel.classList.toggle('hidden');
+        if (!searchPanel.classList.contains('hidden')) {
+          setTimeout(() => {
+            searchInput.focus();
+          }, 100); // 延迟聚焦，确保面板已显示
+        }
+      });
+      
+      // 点击搜索面板内部不触发关闭
+      searchPanel.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+      
+      // 点击其他区域关闭搜索面板
+      document.addEventListener('click', () => {
+        if (!searchPanel.classList.contains('hidden')) {
+          searchPanel.classList.add('hidden');
+        }
+      });
     }
-  });
-  
-  // 点击其他区域关闭搜索面板
-  document.addEventListener('click', (event) => {
-    if (event.target !== searchButton && 
-        !searchPanel?.contains(event.target as Node) && 
-        !searchPanel?.classList.contains('hidden')) {
-      searchPanel?.classList.add('hidden');
+    
+    // 移动端菜单切换
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', (event) => {
+        event.stopPropagation(); // 阻止事件冒泡
+        mobileMenu.classList.toggle('hidden');
+      });
     }
-  });
-  
-  // 移动端菜单切换
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  
-  mobileMenuButton?.addEventListener('click', () => {
-    mobileMenu?.classList.toggle('hidden');
   });
 </script> 

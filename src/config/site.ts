@@ -54,7 +54,7 @@ export const siteConfig: SiteConfig = {
   author: {
     name: 'lxm',
     avatar: '/assets/images/4.jpg',
-    bio: '一只小菜鸟~',
+    bio: '世事漫随流水，算来一梦浮生',
   },
   
   navLinks: [
@@ -63,7 +63,7 @@ export const siteConfig: SiteConfig = {
     { label: '关于我', href: '/about' },
     { 
       label: 'GitHub', 
-      href: 'https://github.com/lxm', 
+      href: 'https://github.com/lxmecho', 
       external: true,
       icon: 'github'
     },
@@ -72,18 +72,23 @@ export const siteConfig: SiteConfig = {
   socialLinks: [
     { 
       platform: 'GitHub', 
-      href: 'https://github.com/lxm', 
+      href: 'https://github.com/lxmecho', 
       icon: 'github'
     },
     { 
       platform: '微博', 
-      href: 'https://weibo.com/lxm', 
+      href: 'https://weibo.com/yourusername', 
       icon: 'weibo'
     },
     { 
       platform: '哔哩哔哩', 
-      href: 'https://space.bilibili.com/12345678', 
+      href: 'https://space.bilibili.com/3461562350176410', 
       icon: 'bilibili'
+    },
+    { 
+      platform: '网易云音乐', 
+      href: 'https://music.163.com/#/user/home?id=1530445568', 
+      icon: 'netease-music'
     },
   ],
   
