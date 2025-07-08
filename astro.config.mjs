@@ -10,7 +10,7 @@ import remarkGfm from 'remark-gfm';
 // https://astro.build/config
 export default defineConfig({
   // 设置为你的GitHub Pages基本路径，例如 '/blog'
-  base: '/blog',
+  base: '/Blog',
   integrations: [
     mdx({
       // 配置MDX

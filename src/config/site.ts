@@ -53,14 +53,14 @@ export const siteConfig: SiteConfig = {
   
   author: {
     name: 'lxm',
-    avatar: '/blog/assets/images/4.jpg',
+    avatar: '/Blog/assets/images/4.jpg',
     bio: '一只小菜鸟~',
   },
   
   navLinks: [
-    { label: '首页', href: '/blog/' },
-    { label: '归档', href: '/blog/archive' },
-    { label: '关于我', href: '/blog/about' },
+    { label: '首页', href: '/Blog/' },
+    { label: '归档', href: '/Blog/archive' },
+    { label: '关于我', href: '/Blog/about' },
     { 
       label: 'GitHub', 
       href: 'https://github.com/lxm', 
@@ -99,9 +99,9 @@ export const siteConfig: SiteConfig = {
   
   heroSettings: {
     backgrounds: [
-      '/blog/assets/images/1.jpg',
-      '/blog/assets/images/2.jpg',
-      '/blog/assets/images/3.jpg'
+      '/Blog/assets/images/1.jpg',
+      '/Blog/assets/images/2.jpg',
+      '/Blog/assets/images/3.jpg'
     ],
     credits: []
   },
