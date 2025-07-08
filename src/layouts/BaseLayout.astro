@@ -61,14 +61,14 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
         }
         return 'light';
       })();
-
+      
       // 设置文档类名以应用主题
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-
+      
       // 存储到localStorage
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('theme', theme);
