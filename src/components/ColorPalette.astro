@@ -39,35 +39,35 @@ import { siteConfig } from '../config/site';
 <script>
   // 确保代码在DOMContentLoaded事件之后执行
   document.addEventListener('DOMContentLoaded', () => {
-    // 获取DOM元素
-    const colorPaletteButton = document.getElementById('color-palette-button');
-    const colorPalettePanel = document.getElementById('color-palette-panel');
-    const colorThemeOptions = document.querySelectorAll('.color-theme-option');
+  // 获取DOM元素
+  const colorPaletteButton = document.getElementById('color-palette-button');
+  const colorPalettePanel = document.getElementById('color-palette-panel');
+  const colorThemeOptions = document.querySelectorAll('.color-theme-option');
     const applyThemeColorButton = document.getElementById('apply-theme-color');
     
     let selectedColor = localStorage.getItem('theme-color') || '#0ea5e9';
     let selectedElement = null;
-    
-    // 设置CSS变量函数
+  
+  // 设置CSS变量函数
     function setThemeColor(colorHex, updateStorage = true) {
-      // 将十六进制颜色转换为RGB值
-      const r = parseInt(colorHex.slice(1, 3), 16);
-      const g = parseInt(colorHex.slice(3, 5), 16);
-      const b = parseInt(colorHex.slice(5, 7), 16);
-      
-      // 设置CSS变量
-      document.documentElement.style.setProperty('--color-primary', colorHex);
-      document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+    // 将十六进制颜色转换为RGB值
+    const r = parseInt(colorHex.slice(1, 3), 16);
+    const g = parseInt(colorHex.slice(3, 5), 16);
+    const b = parseInt(colorHex.slice(5, 7), 16);
+    
+    // 设置CSS变量
+    document.documentElement.style.setProperty('--color-primary', colorHex);
+    document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
       
       // 创建一个颜色更新事件，通知其他组件
       const event = new CustomEvent('themeColorChanged', { 
         detail: { color: colorHex, rgb: `${r}, ${g}, ${b}` } 
       });
       document.dispatchEvent(event);
-      
-      // 保存到localStorage
+    
+    // 保存到localStorage
       if (updateStorage) {
-        localStorage.setItem('theme-color', colorHex);
+    localStorage.setItem('theme-color', colorHex);
       }
       
       // 强制重新应用颜色到所有元素
@@ -88,9 +88,9 @@ import { siteConfig } from '../config/site';
         document.body.style.transition = "";
         document.body.classList.remove('theme-color-changed');
       }, 300);
-    }
-    
-    // 面板切换
+  }
+  
+  // 面板切换
     if (colorPaletteButton && colorPalettePanel) {
       colorPaletteButton.addEventListener('click', (event) => {
         event.stopPropagation(); // 阻止事件冒泡
@@ -100,8 +100,8 @@ import { siteConfig } from '../config/site';
         if (!colorPalettePanel.classList.contains('hidden')) {
           updateSelectedColorUI();
         }
-      });
-      
+  });
+  
       // 点击面板内部不关闭面板
       colorPalettePanel.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -127,18 +127,18 @@ import { siteConfig } from '../config/site';
         } else {
           option.classList.remove('bg-gray-100', 'dark:bg-gray-700');
           check.classList.add('hidden');
-        }
-      });
     }
-    
+  });
+    }
+  
     // 颜色主题选择
-    colorThemeOptions.forEach(option => {
+  colorThemeOptions.forEach(option => {
       if (option) {
         option.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          const color = option.getAttribute('data-color');
-          if (color) {
+      const color = option.getAttribute('data-color');
+      if (color) {
             console.log('选择了颜色:', color); // 调试日志
             selectedColor = color;
             updateSelectedColorUI();
