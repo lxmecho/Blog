@@ -2,21 +2,39 @@
 :root {
   --color-primary: #0ea5e9;
   --color-primary-rgb: 14, 165, 233;
+  
+  /* 添加不同深浅的颜色变体 */
+  --color-primary-50: rgba(var(--color-primary-rgb), 0.05);
+  --color-primary-100: rgba(var(--color-primary-rgb), 0.1);
+  --color-primary-200: rgba(var(--color-primary-rgb), 0.2);
+  --color-primary-300: rgba(var(--color-primary-rgb), 0.3);
+  --color-primary-400: rgba(var(--color-primary-rgb), 0.4);
+  --color-primary-500: rgba(var(--color-primary-rgb), 0.5);
+  --color-primary-600: rgba(var(--color-primary-rgb), 0.6);
+  --color-primary-700: rgba(var(--color-primary-rgb), 0.7);
+  --color-primary-800: rgba(var(--color-primary-rgb), 0.8);
+  --color-primary-900: rgba(var(--color-primary-rgb), 0.9);
+  --color-primary-950: rgba(var(--color-primary-rgb), 0.95);
+  
+  /* 纯色变体 */
+  --color-primary-light: rgba(var(--color-primary-rgb), 0.8);
+  --color-primary-dark: rgba(var(--color-primary-rgb), 1);
 }
 
-/* 主题切换动画 */
+/* 主题切换动画 - 更明显的效果 */
 .theme-color-changed {
-  animation: flash-color 0.3s;
+  animation: flash-color 0.5s ease;
 }
 
 @keyframes flash-color {
-  0% { background-color: rgba(var(--color-primary-rgb), 0.05); }
+  0% { background-color: rgba(var(--color-primary-rgb), 0.1); }
+  50% { background-color: rgba(var(--color-primary-rgb), 0.2); }
   100% { background-color: transparent; }
 }
 
 /* 强制触发重新渲染 */
 .color-theme-updated * {
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s !important;
+  transition: all 0.3s ease !important;
 }
 
 /* 直接应用主题色到元素 */
@@ -36,61 +54,91 @@
   --tw-ring-color: var(--color-primary) !important;
 }
 
-/* 主色调 */
-.text-primary-50, .text-primary-100, .text-primary-200, .text-primary-300, 
-.text-primary-400, .text-primary-500, .text-primary-600, .text-primary-700, 
-.text-primary-800, .text-primary-900, .text-primary-950 {
-  color: var(--color-primary) !important;
-  opacity: var(--tw-text-opacity, 1);
-}
+/* 主色调 - 使用变量替代硬编码颜色 */
+.text-primary-50 { color: var(--color-primary-50) !important; }
+.text-primary-100 { color: var(--color-primary-100) !important; }
+.text-primary-200 { color: var(--color-primary-200) !important; }
+.text-primary-300 { color: var(--color-primary-300) !important; }
+.text-primary-400 { color: var(--color-primary-400) !important; }
+.text-primary-500 { color: var(--color-primary) !important; }
+.text-primary-600 { color: var(--color-primary-600) !important; }
+.text-primary-700 { color: var(--color-primary-700) !important; }
+.text-primary-800 { color: var(--color-primary-800) !important; }
+.text-primary-900 { color: var(--color-primary-900) !important; }
+.text-primary-950 { color: var(--color-primary-950) !important; }
 
-.bg-primary-50, .bg-primary-100, .bg-primary-200, .bg-primary-300, 
-.bg-primary-400, .bg-primary-500, .bg-primary-600, .bg-primary-700, 
-.bg-primary-800, .bg-primary-900, .bg-primary-950 {
-  background-color: var(--color-primary) !important;
-  opacity: var(--tw-bg-opacity, 1);
-}
+.bg-primary-50 { background-color: var(--color-primary-50) !important; }
+.bg-primary-100 { background-color: var(--color-primary-100) !important; }
+.bg-primary-200 { background-color: var(--color-primary-200) !important; }
+.bg-primary-300 { background-color: var(--color-primary-300) !important; }
+.bg-primary-400 { background-color: var(--color-primary-400) !important; }
+.bg-primary-500 { background-color: var(--color-primary) !important; }
+.bg-primary-600 { background-color: var(--color-primary-600) !important; }
+.bg-primary-700 { background-color: var(--color-primary-700) !important; }
+.bg-primary-800 { background-color: var(--color-primary-800) !important; }
+.bg-primary-900 { background-color: var(--color-primary-900) !important; }
+.bg-primary-950 { background-color: var(--color-primary-950) !important; }
 
-.border-primary-50, .border-primary-100, .border-primary-200, .border-primary-300, 
-.border-primary-400, .border-primary-500, .border-primary-600, .border-primary-700, 
-.border-primary-800, .border-primary-900, .border-primary-950 {
-  border-color: var(--color-primary) !important;
-  opacity: var(--tw-border-opacity, 1);
-}
+.border-primary-50 { border-color: var(--color-primary-50) !important; }
+.border-primary-100 { border-color: var(--color-primary-100) !important; }
+.border-primary-200 { border-color: var(--color-primary-200) !important; }
+.border-primary-300 { border-color: var(--color-primary-300) !important; }
+.border-primary-400 { border-color: var(--color-primary-400) !important; }
+.border-primary-500 { border-color: var(--color-primary) !important; }
+.border-primary-600 { border-color: var(--color-primary-600) !important; }
+.border-primary-700 { border-color: var(--color-primary-700) !important; }
+.border-primary-800 { border-color: var(--color-primary-800) !important; }
+.border-primary-900 { border-color: var(--color-primary-900) !important; }
+.border-primary-950 { border-color: var(--color-primary-950) !important; }
 
 /* 悬停状态 */
-.hover\:text-primary-50:hover, .hover\:text-primary-100:hover, .hover\:text-primary-200:hover,
-.hover\:text-primary-300:hover, .hover\:text-primary-400:hover, .hover\:text-primary-500:hover,
-.hover\:text-primary-600:hover, .hover\:text-primary-700:hover, .hover\:text-primary-800:hover,
-.hover\:text-primary-900:hover, .hover\:text-primary-950:hover {
+.hover\:text-primary-500:hover { color: var(--color-primary) !important; }
+.hover\:bg-primary-500:hover { background-color: var(--color-primary) !important; }
+.hover\:border-primary-500:hover { border-color: var(--color-primary) !important; }
+
+/* 焦点状态 */
+.focus\:ring-primary-500:focus { --tw-ring-color: var(--color-primary) !important; }
+.focus\:border-primary-500:focus { border-color: var(--color-primary) !important; }
+
+/* 增强特定组件的颜色应用 */
+/* 导航链接 */
+nav a:hover {
   color: var(--color-primary) !important;
 }
 
-.hover\:bg-primary-50:hover, .hover\:bg-primary-100:hover, .hover\:bg-primary-200:hover,
-.hover\:bg-primary-300:hover, .hover\:bg-primary-400:hover, .hover\:bg-primary-500:hover,
-.hover\:bg-primary-600:hover, .hover\:bg-primary-700:hover, .hover\:bg-primary-800:hover,
-.hover\:bg-primary-900:hover, .hover\:bg-primary-950:hover {
+/* 按钮 */
+.btn-primary, 
+button[type="submit"],
+.apply-theme-color {
   background-color: var(--color-primary) !important;
-}
-
-.hover\:border-primary-50:hover, .hover\:border-primary-100:hover, .hover\:border-primary-200:hover,
-.hover\:border-primary-300:hover, .hover\:border-primary-400:hover, .hover\:border-primary-500:hover,
-.hover\:border-primary-600:hover, .hover\:border-primary-700:hover, .hover\:border-primary-800:hover,
-.hover\:border-primary-900:hover, .hover\:border-primary-950:hover {
   border-color: var(--color-primary) !important;
 }
 
-/* 焦点状态 */
-.focus\:ring-primary-50:focus, .focus\:ring-primary-100:focus, .focus\:ring-primary-200:focus,
-.focus\:ring-primary-300:focus, .focus\:ring-primary-400:focus, .focus\:ring-primary-500:focus,
-.focus\:ring-primary-600:focus, .focus\:ring-primary-700:focus, .focus\:ring-primary-800:focus,
-.focus\:ring-primary-900:focus, .focus\:ring-primary-950:focus {
-  --tw-ring-color: var(--color-primary) !important;
+/* 标签 */
+.tag:hover, 
+.category:hover {
+  background-color: var(--color-primary-100) !important;
+  color: var(--color-primary) !important;
 }
 
-.focus\:border-primary-50:focus, .focus\:border-primary-100:focus, .focus\:border-primary-200:focus,
-.focus\:border-primary-300:focus, .focus\:border-primary-400:focus, .focus\:border-primary-500:focus,
-.focus\:border-primary-600:focus, .focus\:border-primary-700:focus, .focus\:border-primary-800:focus,
-.focus\:border-primary-900:focus, .focus\:border-primary-950:focus {
-  border-color: var(--color-primary) !important;
+/* 文章链接 */
+article a, 
+.prose a {
+  color: var(--color-primary) !important;
+  text-decoration-color: var(--color-primary-300) !important;
+}
+
+/* 图标 */
+.icon-primary, 
+svg.primary {
+  fill: var(--color-primary) !important;
+  stroke: var(--color-primary) !important;
+}
+
+/* 主题颜色变化通知样式 */
+.color-change-notification {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+  border: 2px solid var(--color-primary-700) !important;
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3) !important;
 } 

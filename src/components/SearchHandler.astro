@@ -1,0 +1,131 @@
+---
+import { getCollection } from 'astro:content';
+
+// 获取所有非草稿状态的博客文章
+const allPosts = await getCollection('blog', ({ data }) => {
+  return !data.draft;
+});
+
+// 准备搜索数据，只包含必要的信息
+const searchData = allPosts.map(post => {
+  return {
+    slug: post.slug,
+    data: {
+      title: post.data.title,
+      description: post.data.description,
+      pubDate: post.data.pubDate,
+      updatedDate: post.data.updatedDate,
+      heroImage: post.data.heroImage,
+      tags: post.data.tags,
+      category: post.data.category,
+    }
+  };
+});
+---
+
+<script define:vars={{ searchData }}>
+  // 导入搜索工具
+  import { initSearchData, searchPosts, generateResultsHTML } from '../utils/search.js';
+  
+  // 初始化搜索数据
+  initSearchData(searchData);
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const searchButton = document.querySelector('#search-panel button');
+    
+    if (!searchInput || !searchResults) return;
+    
+    // 防抖函数，避免频繁搜索
+    function debounce(func, delay) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+      };
+    }
+    
+    // 执行搜索
+    const performSearch = debounce((query) => {
+      if (!query || query.trim() === '') {
+        searchResults.innerHTML = '';
+        return;
+      }
+      
+      const results = searchPosts(query);
+      searchResults.innerHTML = generateResultsHTML(results, query);
+      
+      // 添加搜索统计
+      if (results.length > 0) {
+        const statsEl = document.createElement('div');
+        statsEl.className = 'text-xs text-gray-500 dark:text-gray-400 p-2 text-right';
+        statsEl.textContent = `找到 ${results.length} 个结果`;
+        searchResults.prepend(statsEl);
+      }
+    }, 300);
+    
+    // 监听输入事件
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+      performSearch(query);
+    });
+    
+    // 监听搜索按钮点击
+    if (searchButton) {
+      searchButton.addEventListener('click', () => {
+        const query = searchInput.value;
+        performSearch(query);
+      });
+    }
+    
+    // 监听回车键
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value;
+        performSearch(query);
+      }
+    });
+    
+    // 清除按钮功能
+    const clearButton = document.createElement('button');
+    clearButton.className = 'absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hidden';
+    clearButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    `;
+    clearButton.addEventListener('click', () => {
+      searchInput.value = '';
+      searchResults.innerHTML = '';
+      clearButton.classList.add('hidden');
+      searchInput.focus();
+    });
+    
+    // 将清除按钮添加到搜索框旁边
+    searchInput.parentNode.appendChild(clearButton);
+    
+    // 根据输入框内容显示/隐藏清除按钮
+    searchInput.addEventListener('input', () => {
+      if (searchInput.value) {
+        clearButton.classList.remove('hidden');
+      } else {
+        clearButton.classList.add('hidden');
+      }
+    });
+  });
+</script>
+
+<style>
+  /* 搜索结果样式 */
+  :global(#search-results mark) {
+    background-color: rgba(var(--color-primary-rgb), 0.2);
+    color: inherit;
+    padding: 0 0.15rem;
+    border-radius: 0.125rem;
+  }
+  
+  :global(.dark #search-results mark) {
+    background-color: rgba(var(--color-primary-rgb), 0.3);
+  }
+</style> 

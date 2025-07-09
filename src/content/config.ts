@@ -9,6 +9,8 @@ const blogCollection = defineCollection({
     pubDate: z.date(),
     updatedDate: z.date().optional(),
     heroImage: z.string().optional(),
+    // 添加背景图配置选项
+    backgroundImage: z.string().optional(),
     draft: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
     category: z.string().optional(),

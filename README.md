@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-基于Astro框架和Tailwind CSS构建的个人博客，使用了Fuwari主题风格。博客部署在GitHub Pages上，并绑定了自定义域名[121120.xyz](https://121120.xyz)。
+基于Astro框架和Tailwind CSS构建的个人博客，使用了Fuwari主题风格。博客部署在GitHub Pages上，并绑定了自定义域名。
 
 ![博客预览](./public/preview.jpg)
 
@@ -26,14 +26,12 @@
 
 ### 3. 部署与域名配置
 
-部署过程中遇到了一些挑战：
 1. 将代码推送到GitHub仓库
 2. 配置GitHub Pages服务
 3. 购买域名121120.xyz
 4. 设置DNS记录，将域名指向GitHub Pages服务器
 5. 配置HTTPS证书
 
-在自定义域名配置过程中，遇到了路径问题，需要修改配置文件，将原本基于子路径的链接更改为根路径。
 
 ## 博客特性
 

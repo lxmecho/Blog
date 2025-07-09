@@ -3,22 +3,30 @@ import BaseLayout from './BaseLayout.astro';
 import { formatDate } from '../utils/date';
 import type { CollectionEntry } from 'astro:content';
 import '../assets/resource-styles.css';
+import '../assets/blog-backgrounds.css';
 
 interface Props {
   post: CollectionEntry<'blog'>;
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, tags, category } = post.data;
+const { title, description, pubDate, updatedDate, heroImage, backgroundImage, tags, category } = post.data;
 
 // 计算阅读时间
 const readingTime = Math.max(1, Math.ceil(post.body.split(' ').length / 200));
 // 计算字数
 const wordCount = post.body.split(/\s+/).length;
+
+// 背景图优先级: 专门的背景图 > 文章顶部图片 > 默认背景图
+const defaultBgImage = '/assets/images/3.jpg';
+const bgImage = backgroundImage || heroImage || defaultBgImage;
 ---
 
 <BaseLayout title={title} description={description} image={heroImage}>
-  <div class="container mx-auto px-4 py-8">
+  <!-- 添加全屏背景图 -->
+  <div class="blog-background" style={`background-image: url(${bgImage})`}></div>
+
+  <div class="container mx-auto px-4 py-8 relative z-10">
     <div class="max-w-4xl mx-auto bg-card-light dark:bg-card-dark rounded-lg shadow-card overflow-hidden">
       {heroImage && (
         <div class="w-full h-64 md:h-80 overflow-hidden">

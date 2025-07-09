@@ -1,0 +1,261 @@
+---
+// 音乐播放器组件 - 在博客右上角添加音乐播放功能
+---
+
+<div id="music-player" class="relative">
+  <button 
+    id="music-toggle" 
+    class="p-1.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 dark:hover:text-primary-500 transition-colors"
+    aria-label="播放/暂停音乐"
+    title="播放/暂停音乐"
+  >
+    <!-- 播放图标 -->
+    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    
+    <!-- 暂停图标 (默认隐藏) -->
+    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    
+    <!-- 音乐播放动画 - 显示播放状态的小圆点 -->
+    <div id="music-animation" class="absolute -top-1 -right-1 hidden">
+      <span class="flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+      </span>
+    </div>
+  </button>
+  
+  <!-- 歌曲信息提示 - 鼠标悬停时显示 -->
+  <div id="song-info" class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg p-2 text-xs w-48 hidden z-10 transform -translate-x-1/4 opacity-0 transition-all duration-300">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden mr-2">
+        <div id="song-cover" class="w-full h-full bg-center bg-cover"></div>
+      </div>
+      <div class="overflow-hidden">
+        <div id="song-name" class="font-medium text-gray-900 dark:text-gray-100 truncate"></div>
+        <div id="song-artist" class="text-gray-500 dark:text-gray-400 truncate"></div>
+      </div>
+    </div>
+    <div class="mt-1 relative h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div id="song-progress" class="absolute top-0 left-0 h-full bg-primary-500 rounded-full" style="width: 0%"></div>
+    </div>
+  </div>
+  
+  <!-- 音频元素 - 实际播放音乐的HTML5 audio元素 -->
+  <audio id="music-audio" preload="none"></audio>
+</div>
+
+<script>
+  // ===== 音乐库配置 =====
+  // 在这里添加你自己的音乐，格式如下：
+  // {
+  //   title: "歌曲名称",
+  //   artist: "艺术家",
+  //   src: "/assets/music/你的音乐文件.mp3",
+  //   cover: "/assets/music/covers/你的封面图片.jpg"
+  // }
+  const musicLibrary = [
+    {
+      title: "月色与雪色之间，你是第三种绝色",
+      artist: "落花流水",
+      src: "assets/music/月色与雪色之间你是第三种绝色.mp3", // 这个文件需要你自己添加
+      cover: "assets/music/covers/月色与雪色之间.jpg"
+    }
+  ];
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // ===== 获取DOM元素 =====
+    const musicToggle = document.getElementById('music-toggle');
+    const musicAudio = document.getElementById('music-audio');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const musicAnimation = document.getElementById('music-animation');
+    const songInfo = document.getElementById('song-info');
+    const songName = document.getElementById('song-name');
+    const songArtist = document.getElementById('song-artist');
+    const songCover = document.getElementById('song-cover');
+    const songProgress = document.getElementById('song-progress');
+    
+    if (!musicToggle || !musicAudio) return;
+    
+    // 当前播放的歌曲
+    let currentSong = null;
+    
+    // ===== 核心功能函数 =====
+    
+    // 随机选择一首歌曲
+    function selectRandomSong() {
+      if (musicLibrary.length === 0) return null;
+      const randomIndex = Math.floor(Math.random() * musicLibrary.length);
+      return musicLibrary[randomIndex];
+    }
+    
+    // 加载并播放歌曲
+    function loadAndPlaySong(song) {
+      if (!song) return;
+      
+      currentSong = song;
+      musicAudio.src = song.src;
+      musicAudio.load();
+      
+      // 设置歌曲信息
+      songName.textContent = song.title;
+      songArtist.textContent = song.artist;
+      
+      // 设置封面图片
+      if (song.cover) {
+        songCover.style.backgroundImage = `url(${song.cover})`;
+      } else {
+        songCover.style.backgroundImage = 'none';
+      }
+      
+      // 尝试自动播放
+      // 注意：大多数浏览器需要用户交互才能自动播放音频
+      const playPromise = musicAudio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // 自动播放成功
+          showPauseIcon();
+        }).catch(error => {
+          // 自动播放失败（大多数浏览器需要用户交互才能播放）
+          showPlayIcon();
+          console.log("自动播放失败，需要用户交互:", error);
+        });
+      }
+    }
+    
+    // 显示播放图标
+    function showPlayIcon() {
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+      musicAnimation.classList.add('hidden');
+    }
+    
+    // 显示暂停图标
+    function showPauseIcon() {
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+      musicAnimation.classList.remove('hidden');
+    }
+    
+    // 切换播放/暂停
+    function togglePlayPause() {
+      if (!currentSong) {
+        // 如果没有当前歌曲，选择一首并播放
+        loadAndPlaySong(selectRandomSong());
+        return;
+      }
+      
+      if (musicAudio.paused) {
+        musicAudio.play();
+        showPauseIcon();
+      } else {
+        musicAudio.pause();
+        showPlayIcon();
+      }
+    }
+    
+    // 更新进度条
+    function updateProgress() {
+      if (!musicAudio.duration) return;
+      const progress = (musicAudio.currentTime / musicAudio.duration) * 100;
+      songProgress.style.width = `${progress}%`;
+    }
+    
+    // 显示歌曲信息
+    function showSongInfo() {
+      if (!currentSong) return;
+      songInfo.classList.remove('hidden');
+      setTimeout(() => {
+        songInfo.classList.remove('opacity-0');
+        songInfo.classList.remove('transform');
+      }, 10);
+    }
+    
+    // 隐藏歌曲信息
+    function hideSongInfo() {
+      songInfo.classList.add('opacity-0');
+      songInfo.classList.add('transform');
+      setTimeout(() => {
+        songInfo.classList.add('hidden');
+      }, 300);
+    }
+    
+    // ===== 状态管理 =====
+    
+    // 初始化
+    function init() {
+      // 从本地存储中获取上次播放状态
+      const lastPlayState = localStorage.getItem('music-play-state');
+      const lastSongIndex = localStorage.getItem('music-last-song-index');
+      
+      if (lastPlayState === 'playing' && lastSongIndex !== null) {
+        const index = parseInt(lastSongIndex);
+        if (!isNaN(index) && index >= 0 && index < musicLibrary.length) {
+          loadAndPlaySong(musicLibrary[index]);
+        } else {
+          loadAndPlaySong(selectRandomSong());
+        }
+      }
+    }
+    
+    // 保存播放状态
+    function savePlayState() {
+      if (!currentSong) return;
+      
+      const isPlaying = !musicAudio.paused;
+      localStorage.setItem('music-play-state', isPlaying ? 'playing' : 'paused');
+      
+      const songIndex = musicLibrary.findIndex(song => song.title === currentSong.title);
+      if (songIndex !== -1) {
+        localStorage.setItem('music-last-song-index', songIndex.toString());
+      }
+    }
+    
+    // ===== 事件监听 =====
+    
+    // 点击播放/暂停按钮
+    musicToggle.addEventListener('click', togglePlayPause);
+    
+    // 歌曲播放结束
+    musicAudio.addEventListener('ended', () => {
+      // 播放结束后，自动播放下一首
+      loadAndPlaySong(selectRandomSong());
+    });
+    
+    // 更新进度条
+    musicAudio.addEventListener('timeupdate', updateProgress);
+    
+    // 鼠标悬停显示歌曲信息
+    musicToggle.addEventListener('mouseenter', showSongInfo);
+    musicToggle.addEventListener('mouseleave', hideSongInfo);
+    
+    // 页面关闭前保存状态
+    window.addEventListener('beforeunload', savePlayState);
+    
+    // 初始化
+    init();
+  });
+</script>
+
+<style>
+  /* 音乐动画效果 */
+  @keyframes musicBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  
+  .music-playing .music-bar {
+    animation: musicBounce 0.8s ease infinite;
+    background-color: var(--color-primary);
+  }
+  
+  .music-bar:nth-child(1) { animation-delay: 0s; }
+  .music-bar:nth-child(2) { animation-delay: 0.2s; }
+  .music-bar:nth-child(3) { animation-delay: 0.4s; }
+</style> 

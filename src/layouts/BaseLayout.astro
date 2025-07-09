@@ -3,8 +3,10 @@ import { siteConfig } from '../config/site';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FixEncoding from '../components/FixEncoding.astro';
+import KeyboardShortcuts from '../components/KeyboardShortcuts.astro';
 import '../assets/theme-colors.css';
 import '../assets/resource-styles.css';
+import '../assets/music-player.css';
 
 interface Props {
   title?: string;
@@ -89,12 +91,38 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
           document.documentElement.style.setProperty('--color-primary', savedColor);
           document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
           
+          // 设置各种深浅变体
+          document.documentElement.style.setProperty('--color-primary-50', `rgba(${r}, ${g}, ${b}, 0.05)`);
+          document.documentElement.style.setProperty('--color-primary-100', `rgba(${r}, ${g}, ${b}, 0.1)`);
+          document.documentElement.style.setProperty('--color-primary-200', `rgba(${r}, ${g}, ${b}, 0.2)`);
+          document.documentElement.style.setProperty('--color-primary-300', `rgba(${r}, ${g}, ${b}, 0.3)`);
+          document.documentElement.style.setProperty('--color-primary-400', `rgba(${r}, ${g}, ${b}, 0.4)`);
+          document.documentElement.style.setProperty('--color-primary-500', `rgba(${r}, ${g}, ${b}, 0.5)`);
+          document.documentElement.style.setProperty('--color-primary-600', `rgba(${r}, ${g}, ${b}, 0.6)`);
+          document.documentElement.style.setProperty('--color-primary-700', `rgba(${r}, ${g}, ${b}, 0.7)`);
+          document.documentElement.style.setProperty('--color-primary-800', `rgba(${r}, ${g}, ${b}, 0.8)`);
+          document.documentElement.style.setProperty('--color-primary-900', `rgba(${r}, ${g}, ${b}, 0.9)`);
+          document.documentElement.style.setProperty('--color-primary-950', `rgba(${r}, ${g}, ${b}, 0.95)`);
+          
           console.log('BaseLayout: 应用主题颜色', savedColor);
         }
         
         // 监听主题颜色变化事件
         document.addEventListener('themeColorChanged', (event) => {
           console.log('主题颜色已更改:', event.detail);
+          
+          // 应用颜色变化到需要立即更新的元素
+          const primaryElements = document.querySelectorAll('.primary-element, .text-primary-500, .bg-primary-500, .border-primary-500, .hover\\:text-primary-500, .hover\\:bg-primary-500, svg.primary');
+          
+          if (primaryElements.length > 0) {
+            primaryElements.forEach(el => {
+              // 触发重新应用样式
+              el.classList.add('theme-updated');
+              setTimeout(() => {
+                el.classList.remove('theme-updated');
+              }, 10);
+            });
+          }
         });
       });
     </script>
@@ -106,5 +134,26 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
       <slot />
     </main>
     <Footer />
+    
+    <!-- 主题颜色变化反馈 -->
+    <div id="theme-color-feedback" class="fixed inset-0 pointer-events-none z-[-1] opacity-0 transition-opacity duration-500"></div>
+    
+    <!-- 键盘快捷键 -->
+    <KeyboardShortcuts />
+    
+    <script>
+      // 添加主题颜色变化的视觉反馈
+      document.addEventListener('themeColorChanged', (event) => {
+        const feedback = document.getElementById('theme-color-feedback');
+        if (feedback) {
+          feedback.style.backgroundColor = `rgba(${event.detail.rgb}, 0.05)`;
+          feedback.style.opacity = '1';
+          
+          setTimeout(() => {
+            feedback.style.opacity = '0';
+          }, 500);
+        }
+      });
+    </script>
   </body>
 </html> 

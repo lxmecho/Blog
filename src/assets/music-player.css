@@ -1,0 +1,53 @@
+/* 音乐播放器样式 */
+
+/* 播放器容器 */
+#music-player {
+  --music-player-size: 1.5rem;
+}
+
+/* 播放/暂停按钮悬停效果 */
+#music-toggle:hover svg {
+  color: var(--color-primary);
+  transform: scale(1.1);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* 音乐播放动画 */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  80%, 100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* 播放状态指示器 */
+#music-animation span span:first-child {
+  animation: pulse-ring 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+/* 歌曲信息面板 */
+#song-info {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark #song-info {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 歌曲进度条 */
+#song-progress {
+  transition: width 0.1s linear;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  #song-info {
+    width: 160px;
+  }
+} 

@@ -3,34 +3,70 @@ import { siteConfig } from '../config/site';
 ---
 
 <div class="relative">
-  <button id="color-palette-button" class="p-1.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+  <button id="color-palette-button" class="p-1.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 relative" title="更改主题颜色">
     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
     </svg>
+    <!-- 添加当前颜色指示器 -->
+    <span id="current-color-indicator" class="absolute bottom-0 right-0 w-2 h-2 rounded-full border border-gray-300 dark:border-gray-600"></span>
   </button>
   
   <!-- 颜色主题下拉面板 -->
-  <div id="color-palette-panel" class="hidden absolute right-0 mt-2 w-60 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
-    <div class="p-3">
-      <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 px-2">主题颜色</h3>
+  <div id="color-palette-panel" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50 transform transition-all duration-200 scale-95 opacity-0">
+    <div class="p-4">
+      <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3 px-2 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+        </svg>
+        选择主题颜色
+      </h3>
+      
+      <!-- 颜色预览区域 -->
+      <div id="color-preview" class="mb-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col items-center">
+        <div class="text-center mb-2 text-xs text-gray-500 dark:text-gray-400">颜色预览</div>
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="preview-item bg-primary-500 w-8 h-8 rounded-full"></div>
+          <div class="preview-item bg-primary-300 w-6 h-6 rounded-full"></div>
+          <div class="preview-item bg-primary-100 w-4 h-4 rounded-full"></div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="preview-button px-3 py-1 bg-primary-500 text-white text-xs rounded-md">按钮</button>
+          <span class="preview-text text-primary-500 text-sm">文本</span>
+          <span class="preview-border text-sm px-2 border-b-2 border-primary-500">边框</span>
+        </div>
+      </div>
+      
       <div class="space-y-2">
         {siteConfig.appearance.themeColors.map((color) => (
           <button 
-            class="color-theme-option flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+            class="color-theme-option flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-all duration-200"
             data-color={color.primaryColor}
             data-name={color.name}
-            style={`border-left: 4px solid ${color.primaryColor};`}
           >
-            <span class="w-5 h-5 rounded-full mr-3" style={`background-color: ${color.primaryColor}`}></span>
+            <span class="w-6 h-6 rounded-full mr-3 shadow-inner" style={`background-color: ${color.primaryColor}`}></span>
             <span>{color.name}</span>
-            <span class="ml-auto color-theme-check hidden">✓</span>
+            <span class="ml-auto color-theme-check hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </span>
           </button>
         ))}
       </div>
-      <div class="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-        <button id="apply-theme-color" class="w-full px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded text-sm font-medium">
-          应用选中的颜色
+      
+      <!-- 应用按钮区域 -->
+      <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+        <button id="apply-theme-color" class="w-full px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          应用颜色
         </button>
+      </div>
+      
+      <!-- 帮助提示 -->
+      <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 px-2">
+        <p>此设置将改变整个网站的主题颜色，包括按钮、链接、图标等元素。</p>
       </div>
     </div>
   </div>
@@ -39,25 +75,44 @@ import { siteConfig } from '../config/site';
 <script>
   // 确保代码在DOMContentLoaded事件之后执行
   document.addEventListener('DOMContentLoaded', () => {
-  // 获取DOM元素
-  const colorPaletteButton = document.getElementById('color-palette-button');
-  const colorPalettePanel = document.getElementById('color-palette-panel');
-  const colorThemeOptions = document.querySelectorAll('.color-theme-option');
+    // 获取DOM元素
+    const colorPaletteButton = document.getElementById('color-palette-button');
+    const colorPalettePanel = document.getElementById('color-palette-panel');
+    const colorThemeOptions = document.querySelectorAll('.color-theme-option');
     const applyThemeColorButton = document.getElementById('apply-theme-color');
+    const currentColorIndicator = document.getElementById('current-color-indicator');
     
     let selectedColor = localStorage.getItem('theme-color') || '#0ea5e9';
     let selectedElement = null;
-  
-  // 设置CSS变量函数
-    function setThemeColor(colorHex, updateStorage = true) {
-    // 将十六进制颜色转换为RGB值
-    const r = parseInt(colorHex.slice(1, 3), 16);
-    const g = parseInt(colorHex.slice(3, 5), 16);
-    const b = parseInt(colorHex.slice(5, 7), 16);
     
-    // 设置CSS变量
-    document.documentElement.style.setProperty('--color-primary', colorHex);
-    document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+    // 设置当前颜色指示器
+    if (currentColorIndicator) {
+      currentColorIndicator.style.backgroundColor = selectedColor;
+    }
+  
+    // 设置CSS变量函数
+    function setThemeColor(colorHex, updateStorage = true) {
+      // 将十六进制颜色转换为RGB值
+      const r = parseInt(colorHex.slice(1, 3), 16);
+      const g = parseInt(colorHex.slice(3, 5), 16);
+      const b = parseInt(colorHex.slice(5, 7), 16);
+      
+      // 设置CSS变量
+      document.documentElement.style.setProperty('--color-primary', colorHex);
+      document.documentElement.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+      
+      // 设置各种深浅变体
+      document.documentElement.style.setProperty('--color-primary-50', `rgba(${r}, ${g}, ${b}, 0.05)`);
+      document.documentElement.style.setProperty('--color-primary-100', `rgba(${r}, ${g}, ${b}, 0.1)`);
+      document.documentElement.style.setProperty('--color-primary-200', `rgba(${r}, ${g}, ${b}, 0.2)`);
+      document.documentElement.style.setProperty('--color-primary-300', `rgba(${r}, ${g}, ${b}, 0.3)`);
+      document.documentElement.style.setProperty('--color-primary-400', `rgba(${r}, ${g}, ${b}, 0.4)`);
+      document.documentElement.style.setProperty('--color-primary-500', `rgba(${r}, ${g}, ${b}, 0.5)`);
+      document.documentElement.style.setProperty('--color-primary-600', `rgba(${r}, ${g}, ${b}, 0.6)`);
+      document.documentElement.style.setProperty('--color-primary-700', `rgba(${r}, ${g}, ${b}, 0.7)`);
+      document.documentElement.style.setProperty('--color-primary-800', `rgba(${r}, ${g}, ${b}, 0.8)`);
+      document.documentElement.style.setProperty('--color-primary-900', `rgba(${r}, ${g}, ${b}, 0.9)`);
+      document.documentElement.style.setProperty('--color-primary-950', `rgba(${r}, ${g}, ${b}, 0.95)`);
       
       // 创建一个颜色更新事件，通知其他组件
       const event = new CustomEvent('themeColorChanged', { 
@@ -65,42 +120,85 @@ import { siteConfig } from '../config/site';
       });
       document.dispatchEvent(event);
     
-    // 保存到localStorage
+      // 保存到localStorage
       if (updateStorage) {
-    localStorage.setItem('theme-color', colorHex);
+        localStorage.setItem('theme-color', colorHex);
       }
       
-      // 强制重新应用颜色到所有元素
-      const allElements = document.querySelectorAll('*');
-      allElements.forEach(el => {
-        if (el.classList.length > 0) {
-          const classList = el.className.split(' ');
-          if (classList.some(cls => cls.includes('primary-'))) {
-            el.style.cssText = el.style.cssText; // 触发重新应用样式
-          }
-        }
-      });
+      // 更新当前颜色指示器
+      if (currentColorIndicator) {
+        currentColorIndicator.style.backgroundColor = colorHex;
+      }
+      
+      // 强制重新应用颜色 - 添加并移除一个类以触发重新渲染
+      document.body.classList.add('color-theme-updated');
+      setTimeout(() => {
+        document.body.classList.remove('color-theme-updated');
+      }, 100);
       
       // 显示颜色变化反馈
-      document.body.style.transition = "none";
+      document.body.style.transition = "background-color 0.3s ease";
       document.body.classList.add('theme-color-changed');
       setTimeout(() => {
-        document.body.style.transition = "";
         document.body.classList.remove('theme-color-changed');
-      }, 300);
-  }
+      }, 500);
+    }
+    
+    // 预览颜色函数
+    function previewColor(colorHex) {
+      const previewItems = document.querySelectorAll('.preview-item');
+      const previewButton = document.querySelector('.preview-button');
+      const previewText = document.querySelector('.preview-text');
+      const previewBorder = document.querySelector('.preview-border');
+      
+      // 将十六进制颜色转换为RGB值
+      const r = parseInt(colorHex.slice(1, 3), 16);
+      const g = parseInt(colorHex.slice(3, 5), 16);
+      const b = parseInt(colorHex.slice(5, 7), 16);
+      
+      if (previewItems.length > 0) {
+        previewItems[0].style.backgroundColor = colorHex;
+        previewItems[1].style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.3)`;
+        previewItems[2].style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      
+      if (previewButton) {
+        previewButton.style.backgroundColor = colorHex;
+      }
+      
+      if (previewText) {
+        previewText.style.color = colorHex;
+      }
+      
+      if (previewBorder) {
+        previewBorder.style.borderColor = colorHex;
+      }
+    }
   
-  // 面板切换
+    // 面板切换
     if (colorPaletteButton && colorPalettePanel) {
       colorPaletteButton.addEventListener('click', (event) => {
         event.stopPropagation(); // 阻止事件冒泡
-        colorPalettePanel.classList.toggle('hidden');
         
-        // 如果打开面板，高亮当前选中的颜色
-        if (!colorPalettePanel.classList.contains('hidden')) {
+        // 添加动画效果
+        if (colorPalettePanel.classList.contains('hidden')) {
+          colorPalettePanel.classList.remove('hidden');
+          setTimeout(() => {
+            colorPalettePanel.classList.remove('scale-95', 'opacity-0');
+          }, 10);
+          
+          // 如果打开面板，高亮当前选中的颜色
           updateSelectedColorUI();
+          
+          // 预览当前颜色
+          previewColor(selectedColor);
+        } else {
+          colorPalettePanel.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => {
+            colorPalettePanel.classList.add('hidden');
+          }, 200);
         }
-  });
+      });
   
       // 点击面板内部不关闭面板
       colorPalettePanel.addEventListener('click', (event) => {
@@ -111,7 +209,10 @@ import { siteConfig } from '../config/site';
     // 点击其他区域关闭面板
     document.addEventListener('click', () => {
       if (colorPalettePanel && !colorPalettePanel.classList.contains('hidden')) {
-        colorPalettePanel.classList.add('hidden');
+        colorPalettePanel.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          colorPalettePanel.classList.add('hidden');
+        }, 200);
       }
     });
     
@@ -120,6 +221,7 @@ import { siteConfig } from '../config/site';
       colorThemeOptions.forEach(option => {
         const check = option.querySelector('.color-theme-check');
         const color = option.getAttribute('data-color');
+        
         if (color === selectedColor) {
           option.classList.add('bg-gray-100', 'dark:bg-gray-700');
           check.classList.remove('hidden');
@@ -127,21 +229,25 @@ import { siteConfig } from '../config/site';
         } else {
           option.classList.remove('bg-gray-100', 'dark:bg-gray-700');
           check.classList.add('hidden');
-    }
-  });
+        }
+      });
     }
   
     // 颜色主题选择
-  colorThemeOptions.forEach(option => {
+    colorThemeOptions.forEach(option => {
       if (option) {
         option.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
-      const color = option.getAttribute('data-color');
-      if (color) {
+          const color = option.getAttribute('data-color');
+          
+          if (color) {
             console.log('选择了颜色:', color); // 调试日志
             selectedColor = color;
             updateSelectedColorUI();
+            
+            // 实时预览颜色
+            previewColor(color);
           }
         });
       }
@@ -152,9 +258,15 @@ import { siteConfig } from '../config/site';
       applyThemeColorButton.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
+        
         if (selectedColor) {
           setThemeColor(selectedColor, true);
-          colorPalettePanel.classList.add('hidden');
+          
+          // 关闭面板
+          colorPalettePanel.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => {
+            colorPalettePanel.classList.add('hidden');
+          }, 200);
           
           // 显示成功消息
           showColorChangeMessage(`颜色已更改为 ${selectedElement ? selectedElement.getAttribute('data-name') : '新主题'}`);
@@ -166,16 +278,20 @@ import { siteConfig } from '../config/site';
     function showColorChangeMessage(message) {
       // 创建消息元素
       const messageDiv = document.createElement('div');
-      messageDiv.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      messageDiv.className = 'color-change-notification fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity duration-500 opacity-0';
       messageDiv.textContent = message;
       
       // 添加到文档
       document.body.appendChild(messageDiv);
       
+      // 显示消息
+      setTimeout(() => {
+        messageDiv.classList.remove('opacity-0');
+      }, 10);
+      
       // 3秒后移除
       setTimeout(() => {
-        messageDiv.style.opacity = '0';
-        messageDiv.style.transition = 'opacity 0.5s';
+        messageDiv.classList.add('opacity-0');
         setTimeout(() => {
           document.body.removeChild(messageDiv);
         }, 500);
@@ -214,5 +330,14 @@ import { siteConfig } from '../config/site';
   .color-theme-check {
     font-weight: bold;
     color: var(--color-primary);
+  }
+  
+  /* 颜色预览区域样式 */
+  #color-preview {
+    transition: all 0.3s ease;
+  }
+  
+  .preview-item, .preview-button, .preview-text, .preview-border {
+    transition: all 0.3s ease;
   }
 </style> 
