@@ -2,19 +2,19 @@
 
 /* 标题样式 */
 .resource-blog h1 {
-  font-size: 2.5rem;
+  font-size: 1.8rem; /* 原来是2.5rem，改为二级标题大小 */
   font-weight: 700;
   color: #2563eb;
-  font-family: "Microsoft YaHei", "SimHei", sans-serif;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
 .resource-blog h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem; /* 原来是1.8rem，改为三级标题大小 */
   font-weight: 600;
   color: #0ea5e9;
-  font-family: "Microsoft YaHei", "SimHei", sans-serif;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
   margin-top: 2rem;
   margin-bottom: 1rem;
   border-bottom: 2px solid #e5e7eb;
@@ -22,12 +22,46 @@
 }
 
 .resource-blog h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* 原来是1.5rem，继续降级 */
   font-weight: 600;
   color: #14b8a6;
-  font-family: "Microsoft YaHei", "SimHei", sans-serif;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
+}
+
+.resource-blog h4 {
+  font-size: 1.125rem; /* 继续降级 */
+  font-weight: 600;
+  color: #14b8a6;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.resource-blog h5 {
+  font-size: 1rem; /* 继续降级 */
+  font-weight: 600;
+  color: #14b8a6;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.resource-blog h6 {
+  font-size: 0.875rem; /* 继续降级 */
+  font-weight: 600;
+  color: #14b8a6;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 正文使用楷体 */
+.resource-blog p, 
+.resource-blog li, 
+.resource-blog blockquote {
+  font-family: "KaiTi", "楷体", "STKaiti", serif;
 }
 
 /* 资源项目样式 */
@@ -67,7 +101,7 @@
 .resource-desc {
   font-size: 1rem;
   color: #4b5563;
-  font-family: "SimSun", "NSimSun", serif;
+  font-family: "KaiTi", "楷体", "STKaiti", serif;
 }
 
 /* 暗黑模式适配 */

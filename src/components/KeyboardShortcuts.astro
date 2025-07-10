@@ -20,54 +20,11 @@
         return;
       }
       
-      // 按下 / 键打开搜索面板
-      if (event.key === '/' && searchPanel.classList.contains('hidden')) {
-        event.preventDefault(); // 阻止默认行为
-        searchPanel.classList.remove('hidden');
-        searchPanel.classList.add('search-panel-active');
-        
-        // 聚焦到搜索输入框
-        setTimeout(() => {
-          searchInput.focus();
-        }, 100);
-      }
-      
-      // 按下 M 键控制音乐播放/暂停
-      if (event.key === 'm' && musicToggle) {
-        event.preventDefault(); // 阻止默认行为
-        musicToggle.click(); // 模拟点击音乐播放按钮
+      // 按下 ESC 关闭搜索面板
+      if (event.key === 'Escape' && !searchPanel.classList.contains('hidden')) {
+        searchPanel.classList.add('hidden');
+        searchPanel.classList.remove('search-panel-active');
       }
     });
-    
-    // 添加快捷键提示
-    const addShortcutHint = () => {
-      if (!searchInput) return;
-      
-      // 创建搜索快捷键提示元素
-      const searchShortcutHint = document.createElement('div');
-      searchShortcutHint.className = 'absolute right-3 top-full mt-1 text-xs text-gray-400 dark:text-gray-500';
-      searchShortcutHint.innerHTML = '按 <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-700 font-mono">/</kbd> 快速搜索';
-      
-      // 添加到搜索按钮旁边
-      const searchButton = document.getElementById('search-button');
-      if (searchButton) {
-        searchButton.parentNode.style.position = 'relative';
-        searchButton.parentNode.appendChild(searchShortcutHint);
-      }
-      
-      // 创建音乐播放快捷键提示元素
-      if (musicToggle) {
-        const musicShortcutHint = document.createElement('div');
-        musicShortcutHint.className = 'absolute right-3 top-full mt-1 text-xs text-gray-400 dark:text-gray-500';
-        musicShortcutHint.innerHTML = '按 <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-700 font-mono">M</kbd> 播放/暂停';
-        
-        // 添加到音乐播放按钮旁边
-        musicToggle.parentNode.style.position = 'relative';
-        musicToggle.parentNode.appendChild(musicShortcutHint);
-      }
-    };
-    
-    // 添加快捷键提示
-    addShortcutHint();
   });
 </script> 

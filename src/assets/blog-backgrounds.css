@@ -13,12 +13,12 @@
 
 /* 亮色模式下的背景透明度 */
 .blog-background {
-  opacity: 0.2;
+  opacity: 0.5;
 }
 
 /* 暗色模式下的背景透明度 */
 :root.dark .blog-background {
-  opacity: 0.1;
+  opacity: 0.3;
 }
 
 /* 背景模糊效果 */

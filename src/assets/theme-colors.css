@@ -1,144 +1,142 @@
-/* 主题颜色定义 */
+/* 主题颜色样式 */
+
 :root {
+  /* 主题颜色 - 蓝色主题 */
   --color-primary: #0ea5e9;
   --color-primary-rgb: 14, 165, 233;
-  
-  /* 添加不同深浅的颜色变体 */
-  --color-primary-50: rgba(var(--color-primary-rgb), 0.05);
-  --color-primary-100: rgba(var(--color-primary-rgb), 0.1);
-  --color-primary-200: rgba(var(--color-primary-rgb), 0.2);
-  --color-primary-300: rgba(var(--color-primary-rgb), 0.3);
-  --color-primary-400: rgba(var(--color-primary-rgb), 0.4);
-  --color-primary-500: rgba(var(--color-primary-rgb), 0.5);
-  --color-primary-600: rgba(var(--color-primary-rgb), 0.6);
-  --color-primary-700: rgba(var(--color-primary-rgb), 0.7);
-  --color-primary-800: rgba(var(--color-primary-rgb), 0.8);
-  --color-primary-900: rgba(var(--color-primary-rgb), 0.9);
-  --color-primary-950: rgba(var(--color-primary-rgb), 0.95);
-  
-  /* 纯色变体 */
-  --color-primary-light: rgba(var(--color-primary-rgb), 0.8);
-  --color-primary-dark: rgba(var(--color-primary-rgb), 1);
+  --color-primary-50: rgba(14, 165, 233, 0.05);
+  --color-primary-100: rgba(14, 165, 233, 0.1);
+  --color-primary-200: rgba(14, 165, 233, 0.2);
+  --color-primary-300: rgba(14, 165, 233, 0.3);
+  --color-primary-400: rgba(14, 165, 233, 0.4);
+  --color-primary-500: rgba(14, 165, 233, 0.5);
+  --color-primary-600: rgba(14, 165, 233, 0.6);
+  --color-primary-700: rgba(14, 165, 233, 0.7);
+  --color-primary-800: rgba(14, 165, 233, 0.8);
+  --color-primary-900: rgba(14, 165, 233, 0.9);
+  --color-primary-950: rgba(14, 165, 233, 0.95);
 }
 
-/* 主题切换动画 - 更明显的效果 */
-.theme-color-changed {
-  animation: flash-color 0.5s ease;
+/* 主题变化动画 */
+.theme-updated {
+  animation: theme-update-flash 0.5s;
 }
 
-@keyframes flash-color {
-  0% { background-color: rgba(var(--color-primary-rgb), 0.1); }
-  50% { background-color: rgba(var(--color-primary-rgb), 0.2); }
-  100% { background-color: transparent; }
+@keyframes theme-update-flash {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }
 
-/* 强制触发重新渲染 */
-.color-theme-updated * {
-  transition: all 0.3s ease !important;
+/* 主题色应用 - 文本 */
+.text-primary-50 { color: var(--color-primary-50); }
+.text-primary-100 { color: var(--color-primary-100); }
+.text-primary-200 { color: var(--color-primary-200); }
+.text-primary-300 { color: var(--color-primary-300); }
+.text-primary-400 { color: var(--color-primary-400); }
+.text-primary-500 { color: var(--color-primary-500); }
+.text-primary-600 { color: var(--color-primary-600); }
+.text-primary-700 { color: var(--color-primary-700); }
+.text-primary-800 { color: var(--color-primary-800); }
+.text-primary-900 { color: var(--color-primary-900); }
+.text-primary-950 { color: var(--color-primary-950); }
+
+/* 主题色应用 - 背景 */
+.bg-primary-50 { background-color: var(--color-primary-50); }
+.bg-primary-100 { background-color: var(--color-primary-100); }
+.bg-primary-200 { background-color: var(--color-primary-200); }
+.bg-primary-300 { background-color: var(--color-primary-300); }
+.bg-primary-400 { background-color: var(--color-primary-400); }
+.bg-primary-500 { background-color: var(--color-primary-500); }
+.bg-primary-600 { background-color: var(--color-primary-600); }
+.bg-primary-700 { background-color: var(--color-primary-700); }
+.bg-primary-800 { background-color: var(--color-primary-800); }
+.bg-primary-900 { background-color: var(--color-primary-900); }
+.bg-primary-950 { background-color: var(--color-primary-950); }
+
+/* 主题色应用 - 边框 */
+.border-primary-50 { border-color: var(--color-primary-50); }
+.border-primary-100 { border-color: var(--color-primary-100); }
+.border-primary-200 { border-color: var(--color-primary-200); }
+.border-primary-300 { border-color: var(--color-primary-300); }
+.border-primary-400 { border-color: var(--color-primary-400); }
+.border-primary-500 { border-color: var(--color-primary-500); }
+.border-primary-600 { border-color: var(--color-primary-600); }
+.border-primary-700 { border-color: var(--color-primary-700); }
+.border-primary-800 { border-color: var(--color-primary-800); }
+.border-primary-900 { border-color: var(--color-primary-900); }
+.border-primary-950 { border-color: var(--color-primary-950); }
+
+/* 主题色应用 - 悬停效果 */
+.hover\:text-primary-500:hover { color: var(--color-primary-500); }
+.hover\:bg-primary-500:hover { background-color: var(--color-primary-500); }
+.hover\:border-primary-500:hover { border-color: var(--color-primary-500); }
+
+/* 主题色应用 - 焦点效果 */
+.focus\:ring-primary-500:focus { 
+  box-shadow: 0 0 0 2px var(--color-primary-200);
 }
 
-/* 直接应用主题色到元素 */
-.text-theme-color {
-  color: var(--color-primary) !important;
+/* 主题色应用 - 链接 */
+a.theme-link {
+  color: var(--color-primary-600);
+  transition: color 0.2s ease;
 }
 
-.bg-theme-color {
-  background-color: var(--color-primary) !important;
-}
-
-.border-theme-color {
-  border-color: var(--color-primary) !important;
-}
-
-.ring-theme-color {
-  --tw-ring-color: var(--color-primary) !important;
-}
-
-/* 主色调 - 使用变量替代硬编码颜色 */
-.text-primary-50 { color: var(--color-primary-50) !important; }
-.text-primary-100 { color: var(--color-primary-100) !important; }
-.text-primary-200 { color: var(--color-primary-200) !important; }
-.text-primary-300 { color: var(--color-primary-300) !important; }
-.text-primary-400 { color: var(--color-primary-400) !important; }
-.text-primary-500 { color: var(--color-primary) !important; }
-.text-primary-600 { color: var(--color-primary-600) !important; }
-.text-primary-700 { color: var(--color-primary-700) !important; }
-.text-primary-800 { color: var(--color-primary-800) !important; }
-.text-primary-900 { color: var(--color-primary-900) !important; }
-.text-primary-950 { color: var(--color-primary-950) !important; }
-
-.bg-primary-50 { background-color: var(--color-primary-50) !important; }
-.bg-primary-100 { background-color: var(--color-primary-100) !important; }
-.bg-primary-200 { background-color: var(--color-primary-200) !important; }
-.bg-primary-300 { background-color: var(--color-primary-300) !important; }
-.bg-primary-400 { background-color: var(--color-primary-400) !important; }
-.bg-primary-500 { background-color: var(--color-primary) !important; }
-.bg-primary-600 { background-color: var(--color-primary-600) !important; }
-.bg-primary-700 { background-color: var(--color-primary-700) !important; }
-.bg-primary-800 { background-color: var(--color-primary-800) !important; }
-.bg-primary-900 { background-color: var(--color-primary-900) !important; }
-.bg-primary-950 { background-color: var(--color-primary-950) !important; }
-
-.border-primary-50 { border-color: var(--color-primary-50) !important; }
-.border-primary-100 { border-color: var(--color-primary-100) !important; }
-.border-primary-200 { border-color: var(--color-primary-200) !important; }
-.border-primary-300 { border-color: var(--color-primary-300) !important; }
-.border-primary-400 { border-color: var(--color-primary-400) !important; }
-.border-primary-500 { border-color: var(--color-primary) !important; }
-.border-primary-600 { border-color: var(--color-primary-600) !important; }
-.border-primary-700 { border-color: var(--color-primary-700) !important; }
-.border-primary-800 { border-color: var(--color-primary-800) !important; }
-.border-primary-900 { border-color: var(--color-primary-900) !important; }
-.border-primary-950 { border-color: var(--color-primary-950) !important; }
-
-/* 悬停状态 */
-.hover\:text-primary-500:hover { color: var(--color-primary) !important; }
-.hover\:bg-primary-500:hover { background-color: var(--color-primary) !important; }
-.hover\:border-primary-500:hover { border-color: var(--color-primary) !important; }
-
-/* 焦点状态 */
-.focus\:ring-primary-500:focus { --tw-ring-color: var(--color-primary) !important; }
-.focus\:border-primary-500:focus { border-color: var(--color-primary) !important; }
-
-/* 增强特定组件的颜色应用 */
-/* 导航链接 */
-nav a:hover {
-  color: var(--color-primary) !important;
+a.theme-link:hover {
+  color: var(--color-primary);
 }
 
 /* 按钮 */
-.btn-primary, 
-button[type="submit"],
-.apply-theme-color {
-  background-color: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
+.theme-button {
+  background-color: var(--color-primary);
+  color: white;
+  transition: background-color 0.2s ease;
 }
 
-/* 标签 */
-.tag:hover, 
-.category:hover {
-  background-color: var(--color-primary-100) !important;
-  color: var(--color-primary) !important;
+.theme-button:hover {
+  background-color: var(--color-primary-700);
 }
 
-/* 文章链接 */
-article a, 
+/* 文章标题和正文样式覆盖 - 新增 */
+.prose h1 {
+  font-size: 1.8rem !important; /* 降级为h2大小 */
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif !important;
+}
+
+.prose h2 {
+  font-size: 1.5rem !important; /* 降级为h3大小 */
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif !important;
+}
+
+.prose h3 {
+  font-size: 1.25rem !important; /* 降级 */
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif !important;
+}
+
+.prose h4 {
+  font-size: 1.125rem !important; /* 降级 */
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif !important;
+}
+
+.prose h5 {
+  font-size: 1rem !important; /* 降级 */
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif !important;
+}
+
+.prose h6 {
+  font-size: 0.875rem !important; /* 降级 */
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif !important;
+}
+
+/* 正文使用楷体 */
+.prose p,
+.prose li,
+.prose blockquote {
+  font-family: "KaiTi", "楷体", "STKaiti", serif !important;
+}
+
+/* 链接样式 */
 .prose a {
-  color: var(--color-primary) !important;
-  text-decoration-color: var(--color-primary-300) !important;
-}
-
-/* 图标 */
-.icon-primary, 
-svg.primary {
-  fill: var(--color-primary) !important;
-  stroke: var(--color-primary) !important;
-}
-
-/* 主题颜色变化通知样式 */
-.color-change-notification {
-  background-color: var(--color-primary) !important;
-  color: white !important;
-  border: 2px solid var(--color-primary-700) !important;
-  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3) !important;
+  color: var(--color-primary);
 } 

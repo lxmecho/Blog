@@ -1,15 +1,13 @@
 /* 音乐播放器样式 */
 
-/* 播放器容器 */
+/* 主要容器样式 */
 #music-player {
-  --music-player-size: 1.5rem;
+  position: relative;
 }
 
 /* 播放/暂停按钮悬停效果 */
-#music-toggle:hover svg {
-  color: var(--color-primary);
+#music-toggle:hover {
   transform: scale(1.1);
-  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 /* 音乐播放动画 */
@@ -29,10 +27,25 @@
   animation: pulse-ring 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
 }
 
-/* 歌曲信息面板 */
+/* 歌曲信息弹出窗样式 */
 #song-info {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 隐藏所有快捷键提示 */
+#music-toggle + div.text-xs,
+#music-toggle ~ div.absolute.right-3,
+#music-toggle + div[class*="absolute"][class*="right"],
+#music-toggle ~ div[class*="absolute"][class*="right"],
+#music-toggle + div.text-gray-400,
+#music-toggle ~ div.text-gray-400,
+[class*="kbd"],
+div[class*="shortcut"],
+div[class*="hint"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .dark #song-info {
