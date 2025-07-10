@@ -117,6 +117,22 @@
   padding: 0;
 }
 
+/* 可点击的标题样式 */
+.resource-title-link {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  font-family: "SimHei", "黑体", "Microsoft YaHei", sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.resource-title-link:hover {
+  text-decoration: underline;
+}
+
 .resource-title {
   color: #2563eb;
   font-weight: 600;
@@ -131,6 +147,7 @@
   font-family: Consolas, Monaco, "Andale Mono", monospace;
   font-size: 0.875rem;
   word-break: break-all;
+  display: none; /* 隐藏链接URL */
 }
 
 .resource-desc-compact {
@@ -173,6 +190,10 @@
 }
 
 .dark .resource-title {
+  color: #60a5fa;
+}
+
+.dark .resource-title-link {
   color: #60a5fa;
 }
 

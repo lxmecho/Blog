@@ -18,7 +18,7 @@
 
 /* 暗色模式下的背景透明度 */
 :root.dark .blog-background {
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 /* 背景模糊效果 */
