@@ -158,13 +158,6 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
-"background-demo.mdx": {
-	id: "background-demo.mdx";
-  slug: "background-demo";
-  body: string;
-  collection: "blog";
-  data: InferEntrySchema<"blog">
-} & { render(): Render[".mdx"] };
 "markdown-features.mdx": {
 	id: "markdown-features.mdx";
   slug: "markdown-features";
