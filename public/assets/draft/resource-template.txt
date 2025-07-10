@@ -1,0 +1,23 @@
+<!-- 资源模板 - 复制粘贴到ResourceSummary.mdx中使用 -->
+
+<!-- 普通资源（无说明） -->
+<div class="resource-compact">
+  <a href="链接地址" class="resource-title-link">资源名称</a>
+</div>
+
+<!-- 带说明的资源 -->
+<div class="resource-compact">
+  <a href="链接地址" class="resource-title-link">资源名称</a>
+  <span class="resource-desc-compact">资源说明文字</span>
+</div>
+
+<!-- 新分类示例 -->
+## 分类名称
+
+<div class="resource-grid">
+  <div class="resource-compact">
+    <a href="链接地址" class="resource-title-link">资源名称</a>
+  </div>
+  
+  <!-- 添加更多资源... -->
+</div> 
