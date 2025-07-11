@@ -2,11 +2,24 @@
 Kimivod:https://kimivod.com/
 唐人街影院：https://www.trjvod.com/
 NT动漫：https://www.ntdm8.com/
+独播库：https://www.duboku.tv/
+airAnime：https://air.tls.moe/#/home（airAnime 是一款聚合番剧搜索工具）
+播剧网：https://www.boju.cc/
+网飞猫：https://www.ncat23.com/
+捷华影视：https://www.jiehua.tv/
+
+解析坊：https://jxfang.netlify.app/（全网视频解析）
+
+
+
+
+
 
 分类：2.AI工具
 零一万物：https://platform.lingyiwanwu.com/playground
 Gemini Next Chat：https://gemini.u14.app/
 RawChat:https://kelaode.ai/(一些免费的共享Claude账号)
+RawChat公益站点：https://sharedchat.fun/（一些免费的共享ChatGPT账号）
 iAsk：https://iask.ai/
 aichatos:https://v2.aichatoszx.com/
 文心一言：https://yiyan.baidu.com/
@@ -15,7 +28,17 @@ Claude:https://claude.ai/
 （0）百晓生ai助手：https://ai.hxkj.vip/
 FreeAI:https://freeai.aihub.ren/
 Free YubbChat:https://free.yubbchat.com/
-
+喵哥AI：https://miaoai.chaohua.me/
+Morphic:https://www.morphic.sh/
+Anse:https://chatm.ninvfeng.xyz/
+图像提示：https://imagetoprompt.org/（图片转提示词）
+Raphael AI:https://raphael.app/zh（无限免费的 AI 图像生成器）
+StyleAI:https://styleai.art/zh（一键将照片转换为任何风格、ai绘图，可体验）
+Ai潘多拉之盒：https://www.ai-pandora.xyz/（有ai绘图）
+通义：https://www.tongyi.com/（包括ai生成PPT）
+万知：https://www.wanzhi.com/
+FluxGPT：https://flux.urldq.com/（ai生图）
+Dreamify：https://dreamify.slmnb.cn/zh（文生图、图生图）
 
 
 分类:3.图床工具
@@ -52,6 +75,15 @@ SPIayer:https://music.ydev.tech/
 （1）yande:https://yande.re/
 （1）https://everia.club/
 （1）https://www.leisi.shop/
+（1）KURO:https://kurocore.com/
+次元岛：http://ciyuandao.com/
+Cosplay中国-次元岛：https://www.cosplay8.com/index.html
+COS屋：https://www.cos5.com/index.html
+
+
+
+
+
 
 
 分类：10.博客
@@ -59,13 +91,44 @@ SPIayer:https://music.ydev.tech/
 （0）王旭阳个人博客：https://www.wxy97.com/
 
 
+分类：11.壁纸
+WallHere壁纸库：https://wallhere.com/
+https://wallpapers.com/
+Alpha Coders：https://alphacoders.com/
+哲风壁纸：https://haowallpaper.com/（个人推荐）
+
+
+分类：12.游戏
+玩单机网：https://www.wandanji.com/?ref=79528
+
+
+
+分类：13.域名
+https://www.site.ac/（获取免费域名）
+
 
 分类：5.1机场服务
 SSONE：https://m.ssone.uk/
 SSONE导航站：https://hello-ssone.com/
              https://hello36d.com/
+网际快车：https://wjkc.lol/
+零元机场：零元机场.com
+NanoCloud:https://edu.360buyimg.men/
+猫猫云：https://www.maomaovpn.com/
+Proton VPN:https://protonvpn.com/
+Aladdin:https://www.aladingnet.com/
+Akkcloud:https://mirror.akpnaca.com/
+快冲云：https://1ck.org/
 
 
+
+
+
+5.2.工具
+订阅转换助手：https://zh.momobaby.org/
+
+5.3.教程
+使用教程：https://usyacvvdoc.akkcloud1.com/shi-yong-jiao-cheng/windowsmac-jiao-cheng-clash-verge
 
 分类：n.未分类
 王者荣耀战力战区查询：https://wz.k452b.cn/index.html
@@ -84,6 +147,43 @@ Pot（跨平台翻译和OCR）：https://pot-app.com/
 小红书无水印内容在线解析下载：https://xiaohongshu.day/zh/
 Markdown转Word/Html/Pdf：https://toolonline.net/markdown
 ToolOnline:https://toolonline.net/
+百合会论坛：https://bbs.yamibo.com/
+小红书作文生成器：https://dify.ccrui.cn/chat/cTu91pVx8AlKZECR
+Pixso：https://pixso.cn/（一站式完成原型、设计、交互与交付，为数字化团队协作提效）
+（0）Daihai论坛：https://dahkk.cn/（集合资源论坛）
+（0）资源库：https://vip.lzzcc.cn/
+油小猴：https://www.youxiaohou.com/（一个汇聚了各种黑科技的小站）
+西西软件园：https://www.cr173.com/
+PaoLvz:https://paoluz.link/
+https://fofa.info/（网络空间测绘、网络空间安全引擎）
+（0）木晞i的资源汇总：https://yftdtddh.github.io/
+盒子地窖：http://m.wmsio.cn/
+吾爱破解论坛：https://www.52pojie.cn/
+https://woc.space/（文件分享（图片、视频、压缩文件、pdf等）、托管、建站平台）
+国内外PT站推荐汇总：https://tmioe.com/7686.html
+（1）2025在全球访问量最大的成人网站：https://zh.semrush.com/trending-websites/global/adult
+今日热榜;https://www.hotday.uk/
+兄弟盘：https://xiongdipan.com/（百度网盘资源搜索）
+盘友圈;https://panyq.com/
+在线工具-Bugku CTF平台：https://ctf.bugku.com/tools.html
+油猴开发指南：https://learn.scriptcat.org/
+ICONCE:https://iconce.com/（图标制作）
+依奇：https://www.wdku.net/（在线超级转换工具（文字识别、PDF相关、文本小工具、图片处理等））
+在线画图：https://www.suxieban.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
