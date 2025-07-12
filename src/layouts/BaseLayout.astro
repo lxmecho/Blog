@@ -154,6 +154,26 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
           }, 500);
         }
       });
+
+      // 处理页面导航前的音频状态保存
+      window.addEventListener('beforeunload', () => {
+        const globalAudio = window.globalMusicAudio;
+        if (globalAudio) {
+          // 记录当前的播放状态和播放位置
+          try {
+            const audioState = {
+              src: globalAudio.src,
+              currentTime: globalAudio.currentTime,
+              isPlaying: !globalAudio.paused
+            };
+            sessionStorage.setItem('global-music-audio-state', JSON.stringify(audioState));
+            // 记录页面导航前的播放状态
+            sessionStorage.setItem('music-was-playing', (!globalAudio.paused).toString());
+          } catch (e) {
+            console.error('保存音频状态失败:', e);
+          }
+        }
+      });
     </script>
   </body>
 </html> 

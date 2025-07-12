@@ -100,4 +100,34 @@ const bgImage = backgroundImage || heroImage || defaultBgImage;
       </article>
     </div>
   </div>
+
+  <script>
+    // 在博客文章页面中自动恢复音乐播放状态
+    document.addEventListener('DOMContentLoaded', () => {
+      // 尝试从sessionStorage获取音频状态
+      try {
+        const audioState = sessionStorage.getItem('global-music-audio-state');
+        if (audioState) {
+          const state = JSON.parse(audioState);
+          
+          // 如果之前是播放状态，确保在新页面也继续播放
+          if (state.isPlaying) {
+            // 获取全局音频实例（如果存在）
+            const globalAudio = window.globalMusicAudio;
+            if (globalAudio && globalAudio.paused) {
+              // 尝试恢复播放
+              const playPromise = globalAudio.play();
+              if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                  console.log("博客页面: 自动恢复播放失败，可能需要用户交互:", error);
+                });
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error('博客页面: 恢复音频状态失败:', e);
+      }
+    });
+  </script>
 </BaseLayout> 

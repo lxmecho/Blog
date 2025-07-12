@@ -39,6 +39,9 @@ Ai潘多拉之盒：https://www.ai-pandora.xyz/（有ai绘图）
 万知：https://www.wanzhi.com/
 FluxGPT：https://flux.urldq.com/（ai生图）
 Dreamify：https://dreamify.slmnb.cn/zh（文生图、图生图）
+PixwithAI:https://pixwith.ai/zh（ai视频、ai图）
+
+
 
 
 分类:3.图床工具

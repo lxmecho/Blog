@@ -45,32 +45,269 @@
     </div>
   </div>
   
-  <!-- 音频元素 - 实际播放音乐的HTML5 audio元素 -->
-  <audio id="music-audio" preload="none"></audio>
+  <!-- 音频元素 - 仅在全局音频未初始化时使用 -->
+  <div id="music-audio-container" style="display:none;"></div>
 </div>
 
 <script>
   // ===== 音乐库配置 =====
-  // 在这里添加你自己的音乐，格式如下：
-  // {
-  //   title: "歌曲名称",
-  //   artist: "艺术家",
-  //   src: "/assets/music/你的音乐文件.mp3",
-  //   cover: "/assets/music/covers/你的封面图片.jpg"
-  // }
+  // 歌曲库配置
   const musicLibrary = [
     {
-      title: "月色与雪色之间，你是第三种绝色",
-      artist: "落花流水",
-      src: "assets/music/月色与雪色之间你是第三种绝色.mp3", // 这个文件需要你自己添加
-      cover: "assets/music/covers/月色与雪色之间.jpg"
+      title: "三国杀",
+      artist: "未知艺术家",
+      src: "/assets/music/三国杀.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "惊月",
+      artist: "未知艺术家",
+      src: "/assets/music/惊月.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "从未记住的名字永远不会被遗忘",
+      artist: "未知艺术家",
+      src: "/assets/music/从未记住的名字永远不会被遗忘.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "风月明日来",
+      artist: "未知艺术家",
+      src: "/assets/music/风月明日来.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "赠你一绸星河 错落人间烟火",
+      artist: "未知艺术家",
+      src: "/assets/music/赠你一绸星河 错落人间烟火.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "日月星辉之中，你是第四种难得",
+      artist: "未知艺术家",
+      src: "/assets/music/日月星辉之中，你是第四种难得.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "窗边，淡蓝色与你",
+      artist: "未知艺术家",
+      src: "/assets/music/窗边，淡蓝色与你.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "春",
+      artist: "未知艺术家",
+      src: "/assets/music/春.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "半壶纱",
+      artist: "未知艺术家",
+      src: "/assets/music/半壶纱.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "吹灭小山河",
+      artist: "未知艺术家",
+      src: "/assets/music/吹灭小山河.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "千灯祈缘",
+      artist: "未知艺术家",
+      src: "/assets/music/千灯祈缘.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "曦铃",
+      artist: "未知艺术家",
+      src: "/assets/music/曦铃.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "故里逢春",
+      artist: "未知艺术家",
+      src: "/assets/music/故里逢春.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "三国恋",
+      artist: "未知艺术家",
+      src: "/assets/music/三国恋.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "Where Did U Go (G.E.M.重生版)",
+      artist: "G.E.M.邓紫棋",
+      src: "/assets/music/Where Did U Go (G.E.M.重生版).mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "相思误",
+      artist: "未知艺术家",
+      src: "/assets/music/相思误.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "影子小姐",
+      artist: "未知艺术家",
+      src: "/assets/music/影子小姐.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "天龙八部之宿敌",
+      artist: "未知艺术家",
+      src: "/assets/music/天龙八部之宿敌.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "何日重到苏澜桥",
+      artist: "未知艺术家",
+      src: "/assets/music/何日重到苏澜桥.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "细雨",
+      artist: "未知艺术家",
+      src: "/assets/music/细雨.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
+    },
+    {
+      title: "山水之间",
+      artist: "未知艺术家",
+      src: "/assets/music/山水之间.mp3",
+      cover: "/assets/music/covers/placeholder.svg"
     }
   ];
+  
+  // 确保只初始化一次全局音频播放器
+  function getGlobalAudio() {
+    // 通过使用 sessionStorage 在页面之间共享音频状态
+    // 该对象不会在页面导航时丢失
+    const GLOBAL_AUDIO_KEY = 'global-music-audio-state';
+    
+    // 从 sessionStorage 获取当前的播放状态
+    function getAudioState() {
+      try {
+        const state = sessionStorage.getItem(GLOBAL_AUDIO_KEY);
+        return state ? JSON.parse(state) : null;
+      } catch (e) {
+        console.error('无法解析音频状态:', e);
+        return null;
+      }
+    }
+    
+    // 保存音频状态到 sessionStorage
+    function saveAudioState(state) {
+      try {
+        sessionStorage.setItem(GLOBAL_AUDIO_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('无法保存音频状态:', e);
+      }
+    }
+    
+    // 检查全局实例是否已存在
+    let globalAudio = window.globalMusicAudio;
+    
+    if (!globalAudio) {
+      console.log("创建全局音频实例");
+      // 创建全局音频实例
+      globalAudio = new Audio();
+      globalAudio.id = 'global-music-audio';
+      globalAudio.preload = 'none';
+      window.globalMusicAudio = globalAudio;
+      
+      // 从 sessionStorage 恢复状态
+      const storedState = getAudioState();
+      if (storedState) {
+        globalAudio.src = storedState.src;
+        if (storedState.isPlaying) {
+          // 尝试恢复播放
+          const playPromise = globalAudio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+              console.log("自动恢复播放失败:", error);
+            });
+          }
+        }
+        if (storedState.currentTime) {
+          globalAudio.currentTime = storedState.currentTime;
+        }
+      }
+      
+      // 监听全局音频事件
+      globalAudio.addEventListener('ended', () => {
+        // 播放结束后，自动播放下一首
+        const event = new CustomEvent('music-ended');
+        document.dispatchEvent(event);
+      });
+      
+      globalAudio.addEventListener('timeupdate', () => {
+        // 更新进度
+        const event = new CustomEvent('music-timeupdate');
+        document.dispatchEvent(event);
+        
+        // 定期保存当前播放状态到 sessionStorage (每5秒)
+        if (Math.floor(globalAudio.currentTime) % 5 === 0) {
+          saveAudioState({
+            src: globalAudio.src,
+            currentTime: globalAudio.currentTime,
+            isPlaying: !globalAudio.paused
+          });
+        }
+      });
+      
+      globalAudio.addEventListener('play', () => {
+        // 更新播放状态
+        const event = new CustomEvent('music-state-changed', { detail: { isPlaying: true } });
+        document.dispatchEvent(event);
+        
+        // 保存播放状态
+        saveAudioState({
+          src: globalAudio.src,
+          currentTime: globalAudio.currentTime,
+          isPlaying: true
+        });
+      });
+      
+      globalAudio.addEventListener('pause', () => {
+        // 更新暂停状态
+        const event = new CustomEvent('music-state-changed', { detail: { isPlaying: false } });
+        document.dispatchEvent(event);
+        
+        // 保存暂停状态
+        saveAudioState({
+          src: globalAudio.src,
+          currentTime: globalAudio.currentTime,
+          isPlaying: false
+        });
+      });
+    }
+    
+    return globalAudio;
+  }
+  
+  // 页面可见性变化处理 - 在页面切换时保持音乐状态
+  document.addEventListener('visibilitychange', () => {
+    const globalAudio = window.globalMusicAudio;
+    if (!globalAudio) return;
+    
+    if (document.visibilityState === 'visible') {
+      // 页面恢复可见时，如果之前是播放状态，则恢复播放
+      const wasPlaying = sessionStorage.getItem('music-was-playing') === 'true';
+      if (wasPlaying && globalAudio.paused) {
+        globalAudio.play().catch(err => console.log('恢复播放失败:', err));
+      }
+    } else {
+      // 页面不可见时，记录当前播放状态
+      sessionStorage.setItem('music-was-playing', !globalAudio.paused);
+    }
+  });
   
   document.addEventListener('DOMContentLoaded', () => {
     // ===== 获取DOM元素 =====
     const musicToggle = document.getElementById('music-toggle');
-    const musicAudio = document.getElementById('music-audio');
     const playIcon = document.getElementById('play-icon');
     const pauseIcon = document.getElementById('pause-icon');
     const musicAnimation = document.getElementById('music-animation');
@@ -80,14 +317,17 @@
     const songCover = document.getElementById('song-cover');
     const songProgress = document.getElementById('song-progress');
     
-    if (!musicToggle || !musicAudio) return;
+    if (!musicToggle) return;
+    
+    // 获取全局音频实例
+    const musicAudio = getGlobalAudio();
     
     // 当前播放的歌曲
     let currentSong = null;
     
     // ===== 核心功能函数 =====
     
-    // 随机选择一首歌曲
+    // 随机选择一首歌曲 - 保证完全随机均等概率
     function selectRandomSong() {
       if (musicLibrary.length === 0) return null;
       const randomIndex = Math.floor(Math.random() * musicLibrary.length);
@@ -146,17 +386,15 @@
     // 切换播放/暂停
     function togglePlayPause() {
       if (!currentSong) {
-        // 如果没有当前歌曲，选择一首并播放
+        // 如果没有当前歌曲，随机选择一首并播放
         loadAndPlaySong(selectRandomSong());
         return;
       }
       
       if (musicAudio.paused) {
         musicAudio.play();
-        showPauseIcon();
       } else {
         musicAudio.pause();
-        showPlayIcon();
       }
     }
     
@@ -186,20 +424,93 @@
       }, 300);
     }
     
-    // ===== 状态管理 =====
+    // 从存储中恢复当前播放状态
+    function restorePlayingState() {
+      // 从全局音频状态更新UI
+      if (musicAudio.paused) {
+        showPlayIcon();
+      } else {
+        showPauseIcon();
+      }
+      
+      // 尝试从 sessionStorage 获取当前播放信息
+      try {
+        const audioState = sessionStorage.getItem('global-music-audio-state');
+        if (audioState) {
+          const state = JSON.parse(audioState);
+          
+          // 查找匹配的歌曲
+          if (state.src) {
+            const songPath = new URL(state.src, window.location.href).pathname;
+            
+            // 查找对应的歌曲
+            const matchingSong = musicLibrary.find(song => {
+              const fullPath = new URL(song.src, window.location.href).pathname;
+              return fullPath === songPath;
+            });
+            
+            if (matchingSong) {
+              currentSong = matchingSong;
+              
+              // 更新UI信息
+              songName.textContent = currentSong.title;
+              songArtist.textContent = currentSong.artist;
+              
+              if (currentSong.cover) {
+                songCover.style.backgroundImage = `url(${currentSong.cover})`;
+              } else {
+                songCover.style.backgroundImage = 'none';
+              }
+              
+              return; // 已找到匹配歌曲，不需要继续处理
+            }
+          }
+        }
+      } catch (e) {
+        console.error('恢复播放状态失败:', e);
+      }
+      
+      // 后备方案：尝试从 localStorage 恢复歌曲信息
+      const lastSongIndex = localStorage.getItem('music-last-song-index');
+      if (lastSongIndex !== null) {
+        const index = parseInt(lastSongIndex);
+        if (!isNaN(index) && index >= 0 && index < musicLibrary.length) {
+          currentSong = musicLibrary[index];
+          
+          // 只更新UI信息，不重载音频
+          if (currentSong) {
+            songName.textContent = currentSong.title;
+            songArtist.textContent = currentSong.artist;
+            
+            if (currentSong.cover) {
+              songCover.style.backgroundImage = `url(${currentSong.cover})`;
+            } else {
+              songCover.style.backgroundImage = 'none';
+            }
+          }
+        }
+      }
+    }
+    
+    // ===== 初始化 =====
     
     // 初始化
     function init() {
-      // 从本地存储中获取上次播放状态
-      const lastPlayState = localStorage.getItem('music-play-state');
-      const lastSongIndex = localStorage.getItem('music-last-song-index');
+      // 首先恢复UI状态
+      restorePlayingState();
       
-      if (lastPlayState === 'playing' && lastSongIndex !== null) {
-        const index = parseInt(lastSongIndex);
-        if (!isNaN(index) && index >= 0 && index < musicLibrary.length) {
-          loadAndPlaySong(musicLibrary[index]);
-        } else {
-          loadAndPlaySong(selectRandomSong());
+      // 如果是首次访问或音频源未设置，可能需要初始化播放器
+      if (!musicAudio.src) {
+        const lastPlayState = localStorage.getItem('music-play-state');
+        const lastSongIndex = localStorage.getItem('music-last-song-index');
+        
+        if (lastPlayState === 'playing' && lastSongIndex !== null) {
+          const index = parseInt(lastSongIndex);
+          if (!isNaN(index) && index >= 0 && index < musicLibrary.length) {
+            loadAndPlaySong(musicLibrary[index]);
+          } else {
+            // 默认不自动播放，等待用户交互
+          }
         }
       }
     }
@@ -222,14 +533,21 @@
     // 点击播放/暂停按钮
     musicToggle.addEventListener('click', togglePlayPause);
     
-    // 歌曲播放结束
-    musicAudio.addEventListener('ended', () => {
-      // 播放结束后，自动播放下一首
+    // 监听全局音频事件
+    document.addEventListener('music-ended', () => {
+      // 播放结束后，自动播放下一首随机歌曲
       loadAndPlaySong(selectRandomSong());
     });
     
-    // 更新进度条
-    musicAudio.addEventListener('timeupdate', updateProgress);
+    document.addEventListener('music-timeupdate', updateProgress);
+    
+    document.addEventListener('music-state-changed', (e) => {
+      if (e.detail.isPlaying) {
+        showPauseIcon();
+      } else {
+        showPlayIcon();
+      }
+    });
     
     // 鼠标悬停显示歌曲信息
     musicToggle.addEventListener('mouseenter', showSongInfo);
