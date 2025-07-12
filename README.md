@@ -4,7 +4,7 @@
 
 基于Astro框架和Tailwind CSS构建的个人博客，使用了Fuwari主题风格。博客部署在GitHub Pages上，并绑定了自定义域名。
 
-![博客预览](./public/preview.jpg)
+![博客预览](./public/博客展示.jpg)
 
 ## 搭建过程
 

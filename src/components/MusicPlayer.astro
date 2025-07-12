@@ -238,155 +238,459 @@
     }
   }
   
-  // 确保只初始化一次全局音频播放器
-  function getGlobalAudio() {
-    // 通过使用 sessionStorage 在页面之间共享音频状态
-    // 该对象不会在页面导航时丢失
-    const GLOBAL_AUDIO_KEY = 'global-music-audio-state';
+  // 全局音频缓存和预加载管理
+  class AudioManager {
+    constructor() {
+      this.audioCache = new Map();  // 音频缓存
+      this.currentAudio = null;     // 当前播放的音频
+      this.nextAudio = null;        // 预加载的下一首
+      this.isPlaying = false;       // 播放状态
+      this.currentSrc = null;       // 当前播放的源
+      this.currentTime = 0;         // 当前播放位置
+      this.audioContext = null;     // Web Audio API 上下文
+      this.gainNode = null;         // 音量控制节点
+      this.trackBuffer = null;      // 当前音轨缓冲区
+      this.trackSource = null;      // 当前音轨源
+      this.nextToPlay = null;       // 下一首要播放的歌曲
+      
+      // 初始化Web Audio API (如果支持)
+      this.initWebAudio();
+      
+      // 从sessionStorage恢复状态
+      this.restoreState();
+      
+      // 添加页面卸载前的状态保存
+      window.addEventListener('beforeunload', () => this.saveState());
+      
+      // 添加页面可见性变化监听
+      document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
+    }
     
-    // 从 sessionStorage 获取当前的播放状态
-    function getAudioState() {
+    // 初始化Web Audio API
+    initWebAudio() {
       try {
-        const state = sessionStorage.getItem(GLOBAL_AUDIO_KEY);
-        return state ? JSON.parse(state) : null;
+        // 检查浏览器支持
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!window.AudioContext) {
+          debugLog('浏览器不支持Web Audio API，使用标准Audio元素');
+          return;
+        }
+        
+        // 创建音频上下文
+        this.audioContext = new AudioContext();
+        
+        // 创建增益节点（音量控制）
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.gain.value = 1.0;
+        this.gainNode.connect(this.audioContext.destination);
+        
+        debugLog('Web Audio API 初始化成功');
       } catch (e) {
-        debugLog('无法解析音频状态:', e);
+        debugLog('初始化Web Audio API失败:', e);
+        this.audioContext = null;
+      }
+    }
+    
+    // 预加载音频（使用Fetch API和Web Audio API）
+    async preloadTrack(src) {
+      if (!this.audioContext) return null;
+      
+      try {
+        // 检查缓存中是否已有此音频
+        if (this.audioCache.has(src)) {
+          debugLog(`从缓存加载: ${src}`);
+          return this.audioCache.get(src);
+        }
+        
+        debugLog(`预加载音频: ${src}`);
+        // 使用fetch获取音频文件
+        const response = await fetch(src);
+        if (!response.ok) {
+          throw new Error(`加载失败: ${response.status} ${response.statusText}`);
+        }
+        
+        // 获取ArrayBuffer
+        const arrayBuffer = await response.arrayBuffer();
+        
+        // 解码音频数据
+        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        
+        // 存入缓存
+        this.audioCache.set(src, audioBuffer);
+        debugLog(`音频预加载完成: ${src}`);
+        
+        return audioBuffer;
+      } catch (e) {
+        debugLog(`预加载音频失败 ${src}:`, e);
         return null;
       }
     }
     
-    // 保存音频状态到 sessionStorage
-    function saveAudioState(state) {
-      try {
-        sessionStorage.setItem(GLOBAL_AUDIO_KEY, JSON.stringify(state));
-      } catch (e) {
-        debugLog('无法保存音频状态:', e);
+    // 预加载下一首歌
+    async preloadNextTrack() {
+      if (!this.audioContext) return;
+      
+      // 随机选择一首不同于当前歌曲的歌
+      const currentIndex = this.currentSrc ? musicLibrary.findIndex(song => song.src === this.currentSrc) : -1;
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * musicLibrary.length);
+      } while (nextIndex === currentIndex && musicLibrary.length > 1);
+      
+      const nextSong = musicLibrary[nextIndex];
+      this.nextToPlay = nextSong;
+      
+      if (nextSong) {
+        debugLog(`预加载下一首: ${nextSong.title}`);
+        await this.preloadTrack(nextSong.src);
       }
     }
     
-    // 检查全局实例是否已存在
-    let globalAudio = window.globalMusicAudio;
-    
-    if (!globalAudio) {
-      debugLog("创建全局音频实例");
-      // 创建全局音频实例
-      globalAudio = new Audio();
-      globalAudio.id = 'global-music-audio';
-      globalAudio.preload = 'auto';  // 改为自动预加载
-      globalAudio.volume = 1.0;      // 设置默认音量为最大
-      window.globalMusicAudio = globalAudio;
+    // 播放音频
+    async play(src, startTime = 0) {
+      if (!this.audioContext) {
+        // 回退到标准Audio API
+        this.playWithAudioElement(src, startTime);
+        return;
+      }
       
-      // 从 sessionStorage 恢复状态
-      const storedState = getAudioState();
-      if (storedState) {
-        debugLog("从存储恢复音频状态", storedState);
-        globalAudio.src = storedState.src;
-        if (storedState.isPlaying) {
-          // 尝试恢复播放
-          const playPromise = globalAudio.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(error => {
-              debugLog("自动恢复播放失败:", error);
-            });
+      try {
+        // 如果有正在播放的，先停止
+        this.stop();
+        
+        // 获取或加载音频buffer
+        let buffer = this.audioCache.get(src);
+        if (!buffer) {
+          buffer = await this.preloadTrack(src);
+          if (!buffer) throw new Error("加载音频失败");
+        }
+        
+        // 保存当前播放源
+        this.currentSrc = src;
+        this.trackBuffer = buffer;
+        
+        // 创建音源
+        const source = this.audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.gainNode);
+        
+        // 设置结束回调
+        source.onended = () => {
+          debugLog("音频播放完成");
+          this.isPlaying = false;
+          this.trackSource = null;
+          
+          // 通知播放结束
+          const event = new CustomEvent('music-ended');
+          document.dispatchEvent(event);
+        };
+        
+        // 开始播放
+        source.start(0, startTime);
+        this.trackSource = source;
+        this.isPlaying = true;
+        
+        // 更新播放状态
+        const event = new CustomEvent('music-state-changed', { 
+          detail: { isPlaying: true } 
+        });
+        document.dispatchEvent(event);
+        
+        // 定期更新进度
+        this.startProgressTracking();
+        
+        // 预加载下一首
+        this.preloadNextTrack();
+        
+        debugLog(`开始播放: ${src} 从位置: ${startTime}`);
+      } catch (e) {
+        debugLog('播放失败:', e);
+        // 回退到标准Audio API
+        this.playWithAudioElement(src, startTime);
+      }
+    }
+    
+    // 使用标准Audio元素播放（后备方案）
+    playWithAudioElement(src, startTime = 0) {
+      debugLog('使用标准Audio元素播放');
+      // 获取全局音频元素
+      const globalAudio = window.globalMusicAudio || new Audio();
+      
+      if (!window.globalMusicAudio) {
+        window.globalMusicAudio = globalAudio;
+      }
+      
+      // 设置属性和事件
+      globalAudio.src = src;
+      globalAudio.currentTime = startTime;
+      
+      // 播放
+      const playPromise = globalAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          this.isPlaying = true;
+          this.currentSrc = src;
+          
+          // 更新播放状态
+          const event = new CustomEvent('music-state-changed', { 
+            detail: { isPlaying: true } 
+          });
+          document.dispatchEvent(event);
+          
+          debugLog('标准Audio播放成功');
+        }).catch(error => {
+          debugLog('标准Audio播放失败:', error);
+          this.isPlaying = false;
+          
+          // 更新播放状态
+          const event = new CustomEvent('music-state-changed', { 
+            detail: { isPlaying: false } 
+          });
+          document.dispatchEvent(event);
+        });
+      }
+    }
+    
+    // 暂停播放
+    pause() {
+      if (this.audioContext && this.trackSource) {
+        try {
+          this.currentTime = this.getCurrentTime();
+          this.trackSource.stop();
+          this.trackSource = null;
+          this.isPlaying = false;
+          
+          // 更新播放状态
+          const event = new CustomEvent('music-state-changed', { 
+            detail: { isPlaying: false } 
+          });
+          document.dispatchEvent(event);
+          
+          debugLog(`暂停播放，位置: ${this.currentTime}`);
+        } catch (e) {
+          debugLog('暂停失败:', e);
+        }
+      } else {
+        // 使用标准Audio API
+        const globalAudio = window.globalMusicAudio;
+        if (globalAudio) {
+          this.currentTime = globalAudio.currentTime;
+          globalAudio.pause();
+          this.isPlaying = false;
+        }
+      }
+    }
+    
+    // 停止播放
+    stop() {
+      if (this.audioContext && this.trackSource) {
+        try {
+          this.trackSource.stop();
+          this.trackSource = null;
+        } catch (e) {
+          // 忽略已经停止的音源错误
+        }
+      }
+      
+      this.isPlaying = false;
+    }
+    
+    // 恢复播放
+    resume() {
+      if (!this.isPlaying && this.currentSrc) {
+        this.play(this.currentSrc, this.currentTime);
+      }
+    }
+    
+    // 获取当前播放时间
+    getCurrentTime() {
+      if (this.audioContext && this.trackSource) {
+        // 这是一个简化的估算，实际实现更复杂
+        return this.audioContext.currentTime - (this.trackSource.startTime || 0) + (this.currentTime || 0);
+      } else {
+        const globalAudio = window.globalMusicAudio;
+        return globalAudio ? globalAudio.currentTime : 0;
+      }
+    }
+    
+    // 获取音频总时长
+    getDuration() {
+      if (this.audioContext && this.trackBuffer) {
+        return this.trackBuffer.duration;
+      } else {
+        const globalAudio = window.globalMusicAudio;
+        return globalAudio && globalAudio.duration ? globalAudio.duration : 0;
+      }
+    }
+    
+    // 开始进度跟踪
+    startProgressTracking() {
+      // 停止可能存在的进度跟踪
+      if (this.progressInterval) {
+        clearInterval(this.progressInterval);
+      }
+      
+      // 每200毫秒更新一次进度
+      this.progressInterval = setInterval(() => {
+        if (this.isPlaying) {
+          const event = new CustomEvent('music-timeupdate', {
+            detail: {
+              currentTime: this.getCurrentTime(),
+              duration: this.getDuration()
+            }
+          });
+          document.dispatchEvent(event);
+          
+          // 每5秒保存一次状态
+          if (Math.floor(this.getCurrentTime()) % 5 === 0) {
+            this.saveState();
           }
         }
-        if (storedState.currentTime) {
-          globalAudio.currentTime = storedState.currentTime;
-        }
-      }
-      
-      // 监听全局音频事件
-      globalAudio.addEventListener('ended', () => {
-        // 播放结束后，自动播放下一首
-        debugLog("音频播放结束");
-        const event = new CustomEvent('music-ended');
-        document.dispatchEvent(event);
-      });
-      
-      globalAudio.addEventListener('timeupdate', () => {
-        // 更新进度
-        const event = new CustomEvent('music-timeupdate');
-        document.dispatchEvent(event);
-        
-        // 定期保存当前播放状态到 sessionStorage (每5秒)
-        if (Math.floor(globalAudio.currentTime) % 5 === 0) {
-          saveAudioState({
-            src: globalAudio.src,
-            currentTime: globalAudio.currentTime,
-            isPlaying: !globalAudio.paused
-          });
-        }
-      });
-      
-      globalAudio.addEventListener('play', () => {
-        // 更新播放状态
-        debugLog("音频开始播放");
-        const event = new CustomEvent('music-state-changed', { detail: { isPlaying: true } });
-        document.dispatchEvent(event);
-        
-        // 保存播放状态
-        saveAudioState({
-          src: globalAudio.src,
-          currentTime: globalAudio.currentTime,
-          isPlaying: true
-        });
-      });
-      
-      globalAudio.addEventListener('pause', () => {
-        // 更新暂停状态
-        debugLog("音频已暂停");
-        const event = new CustomEvent('music-state-changed', { detail: { isPlaying: false } });
-        document.dispatchEvent(event);
-        
-        // 保存暂停状态
-        saveAudioState({
-          src: globalAudio.src,
-          currentTime: globalAudio.currentTime,
-          isPlaying: false
-        });
-      });
-
-      // 添加错误监听
-      globalAudio.addEventListener('error', (e) => {
-        const error = e.target.error;
-        debugLog(`音频错误: ${error?.code || 'unknown'}`, error?.message || 'No error details');
-      });
-
-      // 添加加载监听
-      globalAudio.addEventListener('loadstart', () => {
-        debugLog("音频开始加载");
-      });
-
-      globalAudio.addEventListener('loadeddata', () => {
-        debugLog("音频数据已加载");
-      });
-
-      globalAudio.addEventListener('canplay', () => {
-        debugLog("音频可以播放");
-      });
+      }, 200);
     }
     
-    return globalAudio;
+    // 停止进度跟踪
+    stopProgressTracking() {
+      if (this.progressInterval) {
+        clearInterval(this.progressInterval);
+        this.progressInterval = null;
+      }
+    }
+    
+    // 保存状态到sessionStorage
+    saveState() {
+      try {
+        const state = {
+          src: this.currentSrc,
+          currentTime: this.getCurrentTime(),
+          isPlaying: this.isPlaying
+        };
+        
+        sessionStorage.setItem('global-music-audio-state', JSON.stringify(state));
+        debugLog('保存音频状态到sessionStorage');
+      } catch (e) {
+        debugLog('保存音频状态失败:', e);
+      }
+    }
+    
+    // 从sessionStorage恢复状态
+    restoreState() {
+      try {
+        const stateStr = sessionStorage.getItem('global-music-audio-state');
+        if (stateStr) {
+          const state = JSON.parse(stateStr);
+          
+          if (state && state.src) {
+            this.currentSrc = state.src;
+            this.currentTime = state.currentTime || 0;
+            
+            debugLog(`恢复状态: ${state.src}, 时间: ${this.currentTime}, 播放: ${state.isPlaying}`);
+            
+            if (state.isPlaying) {
+              // 如果之前在播放，则恢复播放
+              setTimeout(() => {
+                this.play(state.src, this.currentTime);
+              }, 100);
+            }
+          }
+        }
+      } catch (e) {
+        debugLog('恢复音频状态失败:', e);
+      }
+    }
+    
+    // 处理页面可见性变化
+    handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        const wasPlaying = sessionStorage.getItem('music-was-playing') === 'true';
+        if (wasPlaying && !this.isPlaying) {
+          debugLog('页面可见，恢复播放');
+          this.resume();
+        }
+      } else {
+        sessionStorage.setItem('music-was-playing', this.isPlaying.toString());
+        debugLog('页面不可见，保存播放状态: ' + this.isPlaying);
+      }
+    }
+    
+    // 清理资源
+    dispose() {
+      this.stopProgressTracking();
+      this.stop();
+      
+      // 移除事件监听
+      window.removeEventListener('beforeunload', this.saveState);
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+      
+      // 关闭音频上下文
+      if (this.audioContext && this.audioContext.state !== 'closed') {
+        this.audioContext.close().catch(e => debugLog('关闭音频上下文失败:', e));
+      }
+    }
   }
   
-  // 页面可见性变化处理 - 在页面切换时保持音乐状态
-  document.addEventListener('visibilitychange', () => {
-    const globalAudio = window.globalMusicAudio;
-    if (!globalAudio) return;
+  // 确保只初始化一次全局音频播放器
+  function getGlobalAudio() {
+    // 检查全局音频管理器是否已存在
+    let audioManager = window.globalAudioManager;
     
-    if (document.visibilityState === 'visible') {
-      // 页面恢复可见时，如果之前是播放状态，则恢复播放
-      const wasPlaying = sessionStorage.getItem('music-was-playing') === 'true';
-      if (wasPlaying && globalAudio.paused) {
-        debugLog("页面恢复可见，尝试恢复播放");
-        globalAudio.play().catch(err => debugLog('恢复播放失败:', err));
+    if (!audioManager) {
+      debugLog("创建全局音频管理器");
+      // 创建全局音频管理器
+      audioManager = new AudioManager();
+      window.globalAudioManager = audioManager;
+      
+      // 以下是为了兼容性保留的代码，确保传统的globalMusicAudio也存在
+      if (!window.globalMusicAudio) {
+        const globalAudio = new Audio();
+        globalAudio.id = 'global-music-audio';
+        globalAudio.preload = 'auto';
+        globalAudio.volume = 1.0;
+        window.globalMusicAudio = globalAudio;
+        
+        // 监听全局音频事件
+        globalAudio.addEventListener('ended', () => {
+          // 播放结束后，自动播放下一首
+          debugLog("音频播放结束");
+          const event = new CustomEvent('music-ended');
+          document.dispatchEvent(event);
+        });
+        
+        globalAudio.addEventListener('timeupdate', () => {
+          // 更新进度
+          const event = new CustomEvent('music-timeupdate', { 
+            detail: {
+              currentTime: globalAudio.currentTime,
+              duration: globalAudio.duration
+            } 
+          });
+          document.dispatchEvent(event);
+        });
+        
+        globalAudio.addEventListener('play', () => {
+          // 更新播放状态
+          debugLog("音频开始播放");
+          const event = new CustomEvent('music-state-changed', { detail: { isPlaying: true } });
+          document.dispatchEvent(event);
+        });
+        
+        globalAudio.addEventListener('pause', () => {
+          // 更新暂停状态
+          debugLog("音频已暂停");
+          const event = new CustomEvent('music-state-changed', { detail: { isPlaying: false } });
+          document.dispatchEvent(event);
+        });
+
+        // 添加错误监听
+        globalAudio.addEventListener('error', (e) => {
+          const error = e.target.error;
+          debugLog(`音频错误: ${error?.code || 'unknown'}`, error?.message || 'No error details');
+        });
       }
-    } else {
-      // 页面不可见时，记录当前播放状态
-      sessionStorage.setItem('music-was-playing', !globalAudio.paused);
-      debugLog("页面不可见，记录播放状态: " + !globalAudio.paused);
     }
-  });
+    
+    return audioManager;
+  }
   
   document.addEventListener('DOMContentLoaded', () => {
     debugLog("DOMContentLoaded 事件触发");
@@ -410,7 +714,7 @@
     }
     
     // 获取全局音频实例
-    const musicAudio = getGlobalAudio();
+    const audioManager = getGlobalAudio();
     
     // 当前播放的歌曲
     let currentSong = null;
@@ -520,8 +824,6 @@
         : `/${song.src.replace(/^\.\//, '')}`;
         
       debugLog("音频文件完整路径:", fullSrc);
-      musicAudio.src = fullSrc;
-      musicAudio.load();
       
       // 设置歌曲信息
       songName.textContent = song.title;
@@ -534,22 +836,17 @@
       
       songCover.style.backgroundImage = `url(${fullCoverPath})`;
       
-      // 尝试自动播放
-      debugLog("尝试播放歌曲");
-      const playPromise = musicAudio.play();
-      
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          // 自动播放成功
-          debugLog("播放成功");
+      // 使用音频管理器播放
+      audioManager.play(fullSrc, 0)
+        .then(() => {
           showPauseIcon();
           // 如果之前失败过，现在成功了，从失败列表中移除
           const failedIndex = window.failedMusicTracks.indexOf(song.src);
           if (failedIndex > -1) {
             window.failedMusicTracks.splice(failedIndex, 1);
           }
-        }).catch(error => {
-          // 自动播放失败
+        })
+        .catch(error => {
           debugLog("播放失败", error);
           showPlayIcon();
           // 记录播放失败的歌曲
@@ -557,19 +854,11 @@
             window.failedMusicTracks.push(song.src);
           }
           
-          // 如果是由于用户交互限制，则显示提示
-          if (error.name === 'NotAllowedError') {
-            debugLog("因浏览器限制，需要用户交互才能播放");
-          }
-          // 如果是网络或文件错误，尝试播放另一首
-          else if (error.name === 'MediaError' || error.name === 'NetworkError') {
-            debugLog("媒体或网络错误，尝试播放另一首歌曲");
-            setTimeout(() => {
-              loadAndPlaySong(selectRandomSong());
-            }, 1000);
-          }
+          // 尝试播放另一首
+          setTimeout(() => {
+            loadAndPlaySong(selectRandomSong());
+          }, 1000);
         });
-      }
     }
     
     // 显示播放图标
@@ -597,19 +886,25 @@
         return;
       }
       
-      if (musicAudio.paused) {
-        debugLog("恢复播放");
-        musicAudio.play().catch(e => debugLog("播放失败", e));
-      } else {
+      if (audioManager.isPlaying) {
         debugLog("暂停播放");
-        musicAudio.pause();
+        audioManager.pause();
+        showPlayIcon();
+      } else {
+        debugLog("恢复播放");
+        audioManager.resume();
+        showPauseIcon();
       }
     }
     
     // 更新进度条
-    function updateProgress() {
-      if (!musicAudio.duration) return;
-      const progress = (musicAudio.currentTime / musicAudio.duration) * 100;
+    function updateProgress(e) {
+      const detail = e.detail || {};
+      const currentTime = detail.currentTime || audioManager.getCurrentTime();
+      const duration = detail.duration || audioManager.getDuration();
+      
+      if (!duration) return;
+      const progress = (currentTime / duration) * 100;
       songProgress.style.width = `${progress}%`;
     }
     
@@ -637,10 +932,10 @@
       debugLog("恢复播放状态");
       
       // 从全局音频状态更新UI
-      if (musicAudio.paused) {
-        showPlayIcon();
-      } else {
+      if (audioManager.isPlaying) {
         showPauseIcon();
+      } else {
+        showPlayIcon();
       }
       
       // 尝试从 sessionStorage 获取当前播放信息
@@ -724,7 +1019,7 @@
       restorePlayingState();
       
       // 如果是首次访问或音频源未设置，可能需要初始化播放器
-      if (!musicAudio.src) {
+      if (!audioManager.currentSrc) {
         debugLog("音频源未设置，检查是否需要初始化");
         const lastPlayState = localStorage.getItem('music-play-state');
         const lastSongIndex = localStorage.getItem('music-last-song-index');
@@ -748,7 +1043,7 @@
     function savePlayState() {
       if (!currentSong) return;
       
-      const isPlaying = !musicAudio.paused;
+      const isPlaying = audioManager.isPlaying;
       localStorage.setItem('music-play-state', isPlaying ? 'playing' : 'paused');
       
       const songIndex = musicLibrary.findIndex(song => song.title === currentSong.title);
@@ -775,11 +1070,17 @@
       togglePlayPause();
     });
     
-    // 监听全局音频事件
+    // 监听音频事件
     document.addEventListener('music-ended', () => {
       // 播放结束后，自动播放下一首随机歌曲
       debugLog("播放结束，自动播放下一首");
-      loadAndPlaySong(selectRandomSong());
+      
+      // 如果有预加载的下一首，优先播放
+      if (audioManager.nextToPlay) {
+        loadAndPlaySong(audioManager.nextToPlay);
+      } else {
+        loadAndPlaySong(selectRandomSong());
+      }
     });
     
     document.addEventListener('music-timeupdate', updateProgress);
@@ -815,8 +1116,9 @@
     });
     
     // 监听音频错误
-    musicAudio.addEventListener('error', (e) => {
-      const errorCode = musicAudio.error ? musicAudio.error.code : 'unknown';
+    // 监听音频错误
+    audioManager.addEventListener('error', (e) => {
+      const errorCode = e.target.error ? e.target.error.code : 'unknown';
       debugLog(`音频播放错误(${errorCode}): ${currentSong?.title || 'unknown song'}`);
       
       // 如果是播放中遇到错误，尝试播放下一首

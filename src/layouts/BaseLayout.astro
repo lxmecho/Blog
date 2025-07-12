@@ -34,6 +34,10 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
     <meta name="description" content={description} />
     <meta name="author" content={siteConfig.author.name} />
     
+    <!-- 预加载常用音频 -->
+    <link rel="preload" href="/assets/music/三国杀.mp3" as="audio" type="audio/mpeg" fetchpriority="low" />
+    <link rel="preload" href="/assets/music/covers/placeholder.svg" as="image" type="image/svg+xml" />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url} />
@@ -141,6 +145,9 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
     <!-- 键盘快捷键 -->
     <KeyboardShortcuts />
     
+    <!-- 页面切换载入指示器 -->
+    <div id="page-transition-indicator" class="fixed top-0 left-0 w-full h-1 bg-primary-500 transform scale-x-0 origin-left transition-transform duration-300 z-50"></div>
+    
     <script>
       // 添加主题颜色变化的视觉反馈
       document.addEventListener('themeColorChanged', (event) => {
@@ -157,22 +164,118 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
 
       // 处理页面导航前的音频状态保存
       window.addEventListener('beforeunload', () => {
-        const globalAudio = window.globalMusicAudio;
-        if (globalAudio) {
-          // 记录当前的播放状态和播放位置
+        const globalAudioManager = window.globalAudioManager;
+        if (globalAudioManager) {
           try {
-            const audioState = {
-              src: globalAudio.src,
-              currentTime: globalAudio.currentTime,
-              isPlaying: !globalAudio.paused
-            };
-            sessionStorage.setItem('global-music-audio-state', JSON.stringify(audioState));
-            // 记录页面导航前的播放状态
-            sessionStorage.setItem('music-was-playing', (!globalAudio.paused).toString());
+            // 使用AudioManager保存状态
+            globalAudioManager.saveState();
           } catch (e) {
             console.error('保存音频状态失败:', e);
           }
+        } else {
+          // 后备：使用旧的globalMusicAudio
+          const globalAudio = window.globalMusicAudio;
+          if (globalAudio) {
+            try {
+              const audioState = {
+                src: globalAudio.src,
+                currentTime: globalAudio.currentTime,
+                isPlaying: !globalAudio.paused
+              };
+              sessionStorage.setItem('global-music-audio-state', JSON.stringify(audioState));
+              sessionStorage.setItem('music-was-playing', (!globalAudio.paused).toString());
+            } catch (e) {
+              console.error('保存音频状态失败:', e);
+            }
+          }
         }
+      });
+      
+      // 增强页面导航体验，减少页面切换时的音乐中断
+      document.addEventListener('DOMContentLoaded', () => {
+        // 获取过渡指示器
+        const transitionIndicator = document.getElementById('page-transition-indicator');
+        
+        // 预加载链接内容
+        function prefetchLinks() {
+          // 获取所有导航链接
+          const links = document.querySelectorAll('a[href^="/"]:not([href^="//"]):not([target="_blank"])');
+          
+          links.forEach(link => {
+            // 当鼠标悬停时预取链接
+            link.addEventListener('mouseenter', () => {
+              const href = link.getAttribute('href');
+              if (!href || href === window.location.pathname) return;
+              
+              // 检查是否已经预加载
+              if (!link.dataset.prefetched) {
+                // 使用原生prefetch
+                const linkEl = document.createElement('link');
+                linkEl.rel = 'prefetch';
+                linkEl.href = href;
+                linkEl.as = 'document';
+                document.head.appendChild(linkEl);
+                
+                // 标记为已预加载
+                link.dataset.prefetched = 'true';
+              }
+            });
+            
+            // 处理点击事件以显示过渡动画
+            link.addEventListener('click', (e) => {
+              const href = link.getAttribute('href');
+              if (!href || href === window.location.pathname) return;
+              
+              // 特定情况下不拦截
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || 
+                  link.target === '_blank' || link.hasAttribute('download') ||
+                  link.getAttribute('rel') === 'external') {
+                return;
+              }
+              
+              // 激活过渡指示器
+              if (transitionIndicator) {
+                transitionIndicator.style.transform = 'scaleX(0.5)'; // 50%宽度
+                
+                // 在页面卸载前保持一段时间的过渡指示
+                window.addEventListener('beforeunload', () => {
+                  setTimeout(() => {
+                    if (transitionIndicator) {
+                      transitionIndicator.style.transform = 'scaleX(0.9)'; // 90%宽度
+                    }
+                  }, 100);
+                }, { once: true });
+              }
+            });
+          });
+        }
+        
+        // 当页面加载完成时，隐藏过渡指示器
+        if (transitionIndicator) {
+          // 如果页面加载快，显示一个短暂的加载完成动画
+          transitionIndicator.style.transform = 'scaleX(1)';
+          setTimeout(() => {
+            transitionIndicator.style.opacity = '0';
+            setTimeout(() => {
+              transitionIndicator.style.transform = 'scaleX(0)';
+              transitionIndicator.style.opacity = '1';
+            }, 300);
+          }, 200);
+        }
+        
+        // 初始化预加载功能
+        prefetchLinks();
+        
+        // 在文档变化时重新初始化预加载
+        // 这对于部分内容更新非常有用
+        const observer = new MutationObserver(() => {
+          prefetchLinks();
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
       });
     </script>
   </body>
