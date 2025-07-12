@@ -1,13 +1,49 @@
 /* 音乐播放器样式 */
-
-/* 主要容器样式 */
-#music-player {
-  position: relative;
+.music-toggle-active {
+  animation: pulse 1s infinite alternate;
 }
 
-/* 播放/暂停按钮悬停效果 */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* 音乐播放器按钮高亮效果 */
 #music-toggle:hover {
   transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.4);
+}
+
+/* 播放状态指示器样式 */
+#music-animation .animate-ping {
+  animation-duration: 1.5s;
+}
+
+/* 调试面板样式 */
+#music-debug {
+  font-family: monospace;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 9999;
+}
+
+/* 音频状态提示 */
+.audio-status-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 0.3s;
 }
 
 /* 音乐播放动画 */
